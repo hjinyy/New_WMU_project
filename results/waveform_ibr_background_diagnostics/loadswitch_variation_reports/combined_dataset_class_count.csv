@@ -1,0 +1,7 @@
+EventType,LoadSwitchPct,Cases
+SSO_LoadSwitch,5.0,21
+SSO_LoadSwitch,15.0,21
+SSO_LoadSwitch,30.0,21
+SSO_Normal,,3
+SSO_SLG_Fault,,30
+SSO_ThreePhase_Fault,,30

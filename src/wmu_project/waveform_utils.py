@@ -27,6 +27,10 @@ FILENAME_RE = re.compile(
     r"(?:_(?:Bus(?P<bus>\d+)|Case(?P<case>\d+)))?\.(?P<ext>xlsx|csv)$",
     re.IGNORECASE,
 )
+LOADSWITCH_VARIATION_FILENAME_RE = re.compile(
+    r"^E(?P<series>[12])_LoadSwitch(?P<pct>5|30)pct_Bus(?P<bus>\d+)\.(?P<ext>xlsx|csv)$",
+    re.IGNORECASE,
+)
 BUS_COLUMN_RE = re.compile(r"^(?P<signal>[VI][abc])_(?P<bus>\d+)$")
 PHASES = ("A", "B", "C")
 SIGNAL_PREFIXES = ("V", "I")
@@ -86,6 +90,16 @@ def to_local_path(path_like: str | Path) -> Path:
 
 def parse_case_filename(path: str | Path) -> CaseMetadata:
     path = Path(path)
+    variation_match = LOADSWITCH_VARIATION_FILENAME_RE.match(path.name)
+    if variation_match:
+        pct = variation_match.group("pct")
+        return CaseMetadata(
+            case_name=path.stem,
+            event_type="SSO_LoadSwitch",
+            target_bus=float(int(variation_match.group("bus"))),
+            source_path=path,
+            variant=f"LoadSwitch{pct}pct",
+        )
     match = FILENAME_RE.match(path.name)
     if not match:
         raise WaveformDataError(f"Unsupported waveform filename: {path.name}")
