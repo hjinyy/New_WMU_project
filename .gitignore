@@ -19,3 +19,17 @@ WMU_batch_raw_ibr_sso/
 WMU_batch_data_ibr_sso/
 release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization/
 release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization.zip
+# LaTeX temporary files
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex
+*.synctex.gz
+*.toc
+*.xdv
