@@ -33,3 +33,4 @@ release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization
 *.synctex.gz
 *.toc
 *.xdv
+build_ko/
