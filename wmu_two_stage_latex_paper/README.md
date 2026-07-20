@@ -1,8 +1,18 @@
 # WMU Two-Stage LaTeX Paper
 
+이 폴더는 WMU 기반 SSO 환경 이벤트 분류 및 고장 위치추정 논문을 작성하기 위한 LaTeX workspace입니다. 연구 전체 배경, 최신 simulation 현황, 318-case/316-case 분석 결과, 논문 contribution 및 작성 구조는 저장소 루트의 `README.md`에 상세히 정리되어 있습니다.
+
 VS Code에서 이 폴더를 열고 `main.tex` 또는 `main_ko.tex`를 편집하시면 됩니다. 이 폴더는 **VS Code + LaTeX Workshop + TinyTeX/TeX Live + latexmk** 기준으로 세팅되어 있습니다.
 
 이 workspace는 영문/한글 두 버전을 동등하게 둡니다.
+
+## 0. 논문 방향 요약
+
+- 문제 정의: IBR-like SSO background가 존재하는 benchmark power system에서 제한된 WMU 배치로 event classification과 fault localization을 동시에 달성하는 계층형 진단 문제입니다.
+- Stage 1: fault/non-fault 및 event-type classification 성능을 hard constraint로 둡니다.
+- Stage 2: constraint를 만족하는 WMU set 중 exact/one-hop/graph-distance/zone 기준 localization 성능을 최대화합니다.
+- 핵심 trade-off: event classification에 충분한 WMU 배치와 localization에 유리한 WMU 배치가 다를 수 있으므로 multi-objective placement로 정리합니다.
+- 최신 확장: IEEE 14-bus에서 7개 SSO background × 79 events = 553 simulations dataset 생성 자동화가 진행 중입니다.
 
 | Version | Source | Preview PDF | Build output |
 |---|---|---|---|

@@ -1,189 +1,834 @@
-# WMU Project
+# WMU 기반 SSO 환경 이벤트 분류 및 고장 위치추정 연구
 
-Python tooling for WMU analysis on the IEEE 30-bus system.
+이 저장소는 **SSO(Sub-Synchronous Oscillation) 배경조건이 존재하는 IEEE benchmark power system에서 제한된 WMU(Waveform Measurement Unit) 배치만으로 고장·비고장 이벤트를 안정적으로 구분하고, 고장 발생 시 계통 전역의 위치 식별 성능을 확보하는 연구**를 위한 코드·데이터 설명·분석 결과·논문 초안 workspace를 담고 있습니다.
 
-## Existing workflow: SLG observability analysis
+> 이 README의 목적은 GitHub만 보고도 연구 의도, 데이터 생성 방식, 실험 설계, 핵심 결과, 논문 작성 방향을 바로 파악할 수 있게 하는 것입니다.  
+> 현재 논문 방향은 업로드된 발표자료 `WMU_.pptx`의 내용과 지금까지 수행한 WMU/Simulink/Python 분석 결과를 합쳐 **계층형 진단 문제 + 다목적 WMU 배치 최적화**로 정리했습니다.
 
-The original repository workflow is preserved for the IEEE 30-bus SLG fault sweep observability study.
+---
 
-Key entry points:
-- `src/wmu_project/analysis.py`
-- `scripts/analyze_observability.py`
-- `scripts/figure1_coverage_vs_num_wmu.py` ... `scripts/figure6_3d_scatter.py`
-- `docs/research_summary.md`
+## 1. 연구 한 줄 요약
 
-## Waveform Event Classification Workflow
+**IBR-like SSO가 지속적인 진동 배경으로 존재하는 전력계통에서, 제한된 수의 WMU를 어디에 설치해야 고장·비고장 이벤트를 오인 없이 구분하면서 고장 위치까지 충분히 식별할 수 있는가?**
 
-This repository also includes a separate 3-phase waveform event analysis pipeline for:
-- `Normal`
-- `LoadSwitch`
-- `SLG_Fault`
-- `ThreePhase_Fault`
+이를 위해 본 연구는 다음의 계층형 진단 절차를 사용합니다.
 
-Research goal:
-- extract WMU waveform features from raw 3-phase event files,
-- evaluate four-class event classification,
-- compare feature ablations,
-- study limited-WMU sensor-count performance,
-- and run preliminary fault-localization analysis.
+1. **Step 1 — 이벤트 발생 여부 판단**  
+   정상 상태인지, 계통에 이벤트가 발생했는지 판단합니다.
+2. **Step 2 — 고장/비고장 이벤트 구분**  
+   LoadSwitch, CapSwitch 같은 비고장 스위칭과 SLG/LL/LLG/ThreePhase fault를 구분합니다.
+3. **Step 3 — 고장 유형 분류**  
+   고장 이벤트일 경우 SLG, LL, LLG, ThreePhase 중 어떤 유형인지 분류합니다.
+4. **Step 4 — 고장 위치 식별**  
+   고장 유형이 확인된 뒤 exact bus, one-hop, zone 또는 graph-distance 기준으로 위치를 추정합니다.
 
-### Repository layout for waveform-event analysis
+우선순위는 다음과 같습니다.
 
-- `src/wmu_project/waveform_io.py`
-- `src/wmu_project/waveform_quality.py`
-- `src/wmu_project/waveform_features.py`
-- `src/wmu_project/waveform_classification.py`
-- `src/wmu_project/waveform_sensor_selection.py`
-- `src/wmu_project/waveform_localization.py`
-- `src/wmu_project/waveform_utils.py`
-- `scripts/inspect_waveform_dataset.py`
-- `scripts/export_waveform_feature_table.py`
-- `scripts/run_waveform_event_analysis.py`
-- `scripts/run_waveform_classification.py`
-- `scripts/run_waveform_sensor_selection.py`
-- `scripts/run_waveform_localization.py`
-- `docs/waveform_event_analysis.md`
-- `docs/waveform_feature_definitions.md`
-- `docs/waveform_dataset_notes.md`
-- `results/waveform_event_analysis/README.md`
+1. **1순위:** 고장/비고장 및 이벤트 분류 성능 보장  
+2. **2순위:** 고장 발생 시 위치 식별 성능 확보  
+3. **3순위:** 분류에 유리한 배치와 위치추정에 유리한 배치의 trade-off 분석
 
-### Input dataset used in the current run
+---
 
-Primary raw-data directory:
-- Windows: `C:\Users\user\Documents\MATLAB\WMU_test\WMU_batch_raw`
-- WSL/Linux: `/mnt/c/Users/user/Documents/MATLAB/WMU_test/WMU_batch_raw`
+## 2. 핵심 연구 질문
 
-Output directory:
-- Windows: `C:\Users\user\Documents\MATLAB\WMU_test\WMU_batch_data`
-- WSL/Linux: `/mnt/c/Users/user/Documents/MATLAB/WMU_test/WMU_batch_data`
+### RQ1. 제한된 WMU로 SSO 환경에서 고장과 비고장 이벤트를 오인 없이 구분할 수 있는가?
 
-Current raw event inventory:
-- `84` total event files
-- `30` `SLG_Fault_Bus*.xlsx`
-- `30` `ThreePhase_Fault_Bus*.xlsx`
-- `3` `Normal_Case*.xlsx`
-- `21` `LoadSwitch_Bus*.csv`
+주요 평가지표는 다음과 같습니다.
 
-The LoadSwitch cases were regenerated as **15% abrupt load increases** only at buses with existing Pd or Qd:
-`2, 3, 4, 5, 7, 8, 10, 12, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 26, 29, 30`
+- Fault/non-fault F1
+- Event Macro-F1
+- False alarm rate
+- Fault miss rate
 
-The pipeline now supports mixed input formats:
-- xlsx for SLG / ThreePhase / Normal
-- csv for LoadSwitch
+### RQ2. 동일한 또는 확장된 WMU 배치로 계통 전역의 고장 위치를 어느 해상도까지 식별할 수 있는가?
 
-### Installation
+주요 평가지표는 다음과 같습니다.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
+- Exact-bus accuracy
+- One-hop accuracy
+- Top-3 accuracy
+- Mean/median graph-distance error
+- Severe-error rate, 예: graph distance ≥ 2 또는 ≥ 3
+- Zone localization accuracy, zone 정의를 사용할 경우
+
+### RQ3. 이벤트 분류에 최적인 WMU 배치와 위치추정에 최적인 WMU 배치는 동일한가?
+
+현재까지의 결과는 두 목적이 완전히 같지 않을 수 있음을 보여줍니다.
+
+- 이벤트 분류에 유리한 배치: SSO와 이벤트 감지에 민감한 bus 중심
+- 위치추정에 유리한 배치: 계통 전역의 고장 응답 차이를 잘 분해하는 bus 중심
+- 따라서 최종 논문에서는 **classification constraint를 만족하는 후보 중 localization 성능을 최대화하는 multi-objective/joint placement 문제**로 정리하는 것이 적합합니다.
+
+---
+
+## 3. 제안하는 논문 기여점
+
+### Contribution 1. SSO 배경조건을 고려한 계층형 WMU 진단 문제 정의
+
+기존 단일 이벤트 분류 문제가 아니라, SSO가 지속적인 배경 진동으로 존재하는 상황에서 다음을 순차적으로 수행하는 **계층형 진단 체계**를 정의합니다.
+
+1. event detection
+2. fault/non-fault discrimination
+3. fault-type classification
+4. fault localization
+
+### Contribution 2. 고장·비고장 오분류를 억제하는 classification-constrained WMU 배치
+
+다양한 SSO 배경조건에서도 고장을 비고장으로 놓치거나, 비고장 switching을 고장으로 오인하지 않도록 다음 hard constraint를 둡니다.
+
+```text
+Fault/non-fault F1 ≥ 0.98
+False alarm rate ≤ 0.02
+Fault miss rate ≤ 0.02
+Event Macro-F1 ≥ 목표값
+WMU 수 ≤ K
 ```
 
-### End-to-end waveform-event analysis
+이 조건을 만족하는 배치만 localization 후보로 사용합니다.
 
-```bash
-python scripts/run_waveform_event_analysis.py \
-  --input-dir "C:\Users\user\Documents\MATLAB\WMU_test\WMU_batch_raw" \
-  --output-dir "C:\Users\user\Documents\MATLAB\WMU_test\WMU_batch_data" \
-  --f0 50
+### Contribution 3. 이벤트 판별과 공간 분해능 사이의 trade-off 분석
+
+classification-only placement와 localization-aware placement를 비교하여 다음을 분석합니다.
+
+- 소수 WMU로 이벤트 분류는 가능한가?
+- 위치추정까지 고려하면 추가 WMU가 필요한가?
+- exact bus 기준이 너무 엄격할 때 one-hop, graph-distance, zone 기준은 어떤 의미를 갖는가?
+- 최종적으로 어떤 WMU set이 논문 기여로 제시 가능한가?
+
+### Contribution 4. IEEE 30-bus 기존 결과와 IEEE 14-bus 신규 SSO dataset 생성 경로의 연결
+
+현재 저장소에는 IEEE 30-bus 기반 분석 결과가 정리되어 있고, 최신으로는 IEEE 14-bus에서 SSO background를 7종으로 확장한 553-case dataset 생성 자동화가 진행 중입니다. 논문에서는 다음 두 축을 연결할 수 있습니다.
+
+- **IEEE 30-bus:** 기존 318-case 분석, 검증 audit, multi-objective placement evidence
+- **IEEE 14-bus:** SSO frequency/magnitude를 명시적으로 sweep하는 신규 benchmark dataset
+
+---
+
+## 4. 시스템 및 이벤트 시나리오
+
+### 4.1 Benchmark system
+
+현재 연구는 두 benchmark system을 다룹니다.
+
+| 계통 | 역할 | 현재 상태 |
+|---|---|---|
+| IEEE 30-bus | 기존 WMU 이벤트 분류/위치추정 분석의 중심 dataset | 318-case feature 분석, validation audit, localization-aware selection 완료 |
+| IEEE 14-bus | SSO frequency/magnitude sweep이 명확한 신규 raw waveform dataset | 553-case MATLAB/Simulink 자동 생성 진행 중 |
+
+### 4.2 이벤트 종류
+
+공통적으로 고려하는 이벤트는 다음과 같습니다.
+
+| 대분류 | 이벤트 | 의미 |
+|---|---|---|
+| Normal | Normal | 이벤트 없는 정상 운전 |
+| Non-fault event | LoadSwitch | 부하 투입/변동 이벤트 |
+| Non-fault event | CapSwitch | 커패시터성 무효전력 투입/변동 이벤트 |
+| Fault event | SLG | Single Line-to-Ground fault |
+| Fault event | LL | Line-to-Line fault |
+| Fault event | LLG | Double Line-to-Ground fault |
+| Fault event | ThreePhase | 3상 고장 |
+
+### 4.3 SSO background 조건
+
+최신 IEEE 14-bus dataset 생성에서는 다음 7개 background를 사용합니다.
+
+| Background | 설정 |
+|---|---|
+| BG01 | No-SSO |
+| BG02 | 15 Hz, 1% |
+| BG03 | 15 Hz, 3% |
+| BG04 | 25 Hz, 1% |
+| BG05 | 25 Hz, 3% |
+| BG06 | 35 Hz, 1% |
+| BG07 | 35 Hz, 3% |
+
+SSO는 단순 이벤트가 아니라 **모든 event case 위에 깔리는 background condition**으로 해석합니다.
+
+---
+
+## 5. IEEE 14-bus 최신 Simulink dataset 설계
+
+### 5.1 생성 목적
+
+IEEE 14-bus 계통에서 Bus 7에 IBR-like SSO background를 주입하고, Normal, LoadSwitch, CapSwitch, SLG, LL, LLG, ThreePhase 이벤트를 자동 생성하여 14개 bus의 3상 전압·전류 waveform을 CSV로 저장합니다.
+
+연구 목적은 다음과 같습니다.
+
+- 다양한 SSO 조건에서도 fault/non-fault event classification이 가능한지 검증
+- 계통 전역 fault localization 성능 평가
+- 제한된 WMU 배치가 event classification과 localization에 주는 trade-off 분석
+
+### 5.2 Case 수
+
+IEEE 14-bus dataset의 case 수는 다음과 같이 정의했습니다.
+
+```text
+1 Normal
++ 11 LoadSwitch buses
++ 11 CapSwitch buses
++ 14 SLG fault buses
++ 14 LL fault buses
++ 14 LLG fault buses
++ 14 ThreePhase fault buses
+= 79 cases / background
+
+79 cases × 7 SSO backgrounds = 553 simulations
 ```
 
-### Main generated outputs
+LoadSwitch/CapSwitch 대상 bus:
 
-External output directory:
-- `feature_table_by_bus.csv`
-- `feature_table_by_case.csv`
-- `feature_table_by_case_wide.csv`
-- `reports/data_quality_report.csv`
-- `reports/classification_full_wmu_metrics.csv`
-- `reports/confusion_matrix_full_wmu.csv`
-- `reports/misclassified_cases_full_wmu.csv`
-- `reports/feature_ablation_metrics.csv`
-- `reports/feature_ablation_used_columns.txt`
-- `reports/sensor_count_curve.csv`
-- `reports/selected_wmu_by_k.csv`
-- `reports/sensor_selection_debug.csv`
-- `reports/fault_localization_preliminary.csv`
-- `reports/fault_localization_debug.csv`
-- `reports/final_analysis_summary.md`
-- `figures/*.png`
+```text
+2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14
+```
 
-Tracked repo summaries:
-- `results/waveform_event_analysis/reports/`
-- `results/waveform_event_analysis/figures/`
+Fault 대상 bus:
 
-### Current run snapshot
+```text
+1, 2, 3, ..., 14
+```
 
-From the 2026-05-20 corrected 84-file dataset run:
-- input raw event files: `84`
-- class counts: `Normal=3`, `LoadSwitch=21`, `SLG_Fault=30`, `ThreePhase_Fault=30`
-- data-quality status: `OK=84`, `WARNING=0`, `FAILED=0`
-- best full-WMU LOO classifier: `RandomForest`
-- best full-WMU macro-F1: `0.7381`
-- best balanced accuracy: `0.7500`
+### 5.3 시간 설정 및 leakage 방지
 
-See `results/waveform_event_analysis/reports/final_analysis_summary.md` for details.
+모든 이벤트 onset을 `0.3 s`로 통일했습니다.
 
-### Normal/SLG debugging status
+| 항목 | 값 |
+|---|---:|
+| Stop time | 0.5 s |
+| Sample time | 5e-5 s |
+| Expected rows | 10001 |
+| Expected columns | 85 |
+| Event onset | 0.3 s |
+| Fault interval | `[0.3, 0.36]` |
 
-A later debugging pass found that the `Normal -> SLG_Fault` failure mode cannot be interpreted as a simple model weakness alone. The current workflow now also:
-- audits Normal raw waveforms directly,
-- checks label parsing and feature-table integrity,
-- compares the original flat classifier with a hierarchical `Normal-vs-Event` trigger-first classifier, and
-- treats the present outputs as **feature/dataset diagnostics**, not as a final classification claim, when `Normal` and many `SLG_Fault` cases appear numerically indistinguishable.
+이 설정은 이벤트 종류별 발생 시각 차이가 classifier에 새는 **label leakage**를 방지하기 위한 것입니다.
 
-Key additional outputs:
-- `results/waveform_event_analysis/reports/normal_raw_sanity_check.csv`
-- `results/waveform_event_analysis/reports/label_parsing_check.csv`
-- `results/waveform_event_analysis/reports/classification_flat_vs_hierarchical_metrics.csv`
-- `results/waveform_event_analysis/figures/confusion_matrix_hierarchical_full_wmu.png`
-- `results/waveform_event_analysis/figures/normal_waveform_sanity_check.png`
-- `results/waveform_event_analysis/figures/normal_vs_slg_core_feature_boxplot.png`
+### 5.4 Raw CSV column 형식
 
+각 CSV는 숫자 waveform만 포함합니다.
 
-## IBR-background WMU waveform dataset (2026-06-03)
+```text
+Time,
+Va_1,Vb_1,Vc_1,Ia_1,Ib_1,Ic_1,
+Va_2,Vb_2,Vc_2,Ia_2,Ib_2,Ic_2,
+...
+Va_14,Vb_14,Vc_14,Ia_14,Ib_14,Ic_14
+```
 
-A new MATLAB R2024a automation path generates an 84-case modified IEEE 30-bus waveform dataset where IBR-like 25 Hz SSO is present as a background condition in every case. The raw CSV files are stored outside git at `C:\Users\user\Documents\MATLAB\WMU_final\WMU_batch_raw_ibr_background`; compact analysis reports and key figures are tracked under `results/waveform_ibr_background_analysis/`.
+총 column 수:
 
-Key entry points:
-- MATLAB batch automation: `scripts/matlab/run_wmu_ibr_background_batch.m`
-- Python analysis: `scripts/run_waveform_event_analysis.py --scenario ibr-background`
-- Scenario notes: `docs/waveform_ibr_sso_scenario.md`
-- Dataset notes: `docs/waveform_dataset_notes.md`
+```text
+1 + 14 × 6 = 85 columns
+```
 
-The source model is copied to `Thirtybussys_WMU_IBR_batch.slx` before execution and is not saved directly. Raw CSV, analysis output folders, and `.slx` files remain excluded from git.
+Metadata는 CSV에 반복 저장하지 않고 `manifests/case_manifest.csv`에 별도 저장합니다.
 
-## Git hygiene
+### 5.5 최신 실행 상태
 
-The repository excludes raw and large local artifacts such as:
-- `*.xlsx`
-- `*.mat`
-- `*.slx`
-- `WMU_batch_raw/`
-- `WMU_batch_data/`
-- `outputs/`
-- `results/raw/`
-- `results/intermediate/`
+최신 IEEE 14-bus 자동화 작업의 실제 경로는 다음입니다.
 
-Raw xlsx/csv event files and large intermediate tables stay outside git. Compact summary CSVs and key figures under `results/waveform_event_analysis/` remain trackable.
+```text
+/run/media/hy/새 볼륨/WMU_project
+```
 
+현재 확인된 상태는 다음과 같습니다.
 
-## IBR-like SSO scenario status
+| 항목 | 값 |
+|---|---:|
+| manifest rows | 553 |
+| SUCCESS | 264 |
+| RUNNING | 1 |
+| PENDING | 288 |
+| raw CSV count | 264 |
+| FAILED | 0 |
 
-An SPS-only IBR-like SSO inspection/scaffolding pass was added for MATLAB R2025b. The current model inspection confirms that the existing workflow can safely reset all fault/loadswitch events, but a validated **physical** 20–30 Hz SPS injection path has not yet been established without adding incompatible Simscape physical-port blocks. See `docs/waveform_ibr_sso_scenario.md`.
+현재 실행 중 case:
 
-## Additional IBR-background diagnostics
+```text
+CaseID 261 / SSO25Hz_M01 / SLG / Bus 1
+```
 
-The follow-up interpretation pass is tracked under
-`results/waveform_ibr_background_diagnostics/`. It reuses the existing feature
-tables and adds feature-distribution/separability evidence, full-WMU
-RandomForest importance, stricter single-WMU and leave-target-location-out
-sensor-count checks, and graph-distance/zone fault-localization metrics. It
-does not rerun Simulink or regenerate raw CSV files.
+주의: 이 553-case dataset은 아직 전체 완료 상태가 아니므로, 논문 본문에 최종 수치로 쓰려면 전체 `SUCCESS=553`, `FAILED=0` 확인 후 `dataset_summary.csv`, `data_quality_summary.csv`, `run_summary.txt`를 함께 확인해야 합니다.
+
+### 5.6 MATLAB/Simulink 자동화 스크립트
+
+최신 IEEE 14-bus 자동화는 다음 스크립트 구조로 분리했습니다.
+
+```text
+scripts/inspect_fourteen_bus_model.m
+scripts/build_case_manifest_14bus.m
+scripts/configure_sso_case.m
+scripts/configure_fault_case.m
+scripts/configure_load_case.m
+scripts/reset_all_events.m
+scripts/extract_bus_waveforms.m
+scripts/validate_case_output.m
+scripts/run_pilot_14bus.m
+scripts/run_dataset_14bus.m
+scripts/summarize_dataset_14bus.m
+scripts/wmu14_util.m
+```
+
+핵심 원칙은 다음과 같습니다.
+
+- 원본 모델은 덮어쓰지 않음
+- 작업용 복사본 `Fourteen_bus_WMU_auto.mdl` 사용
+- 모든 block parameter는 `DialogParameters`로 실제 ID를 확인
+- SSO MATLAB Function은 case별로 안전하게 주입
+- 전체 실행 전 pilot 5개 검증
+- CSV rows/columns/time axis/NaN/Inf 검증
+- 중단 후 resume 가능하도록 manifest 기반 상태 관리
+
+### 5.7 실제 발견한 주요 block
+
+기존 자동화 과정에서 확인된 주요 block은 다음과 같습니다.
+
+```text
+SSO MATLAB Function block:
+Fourteen_bus_WMU_auto/MATLAB Function4
+
+Dynamic Load block:
+Fourteen_bus_WMU_auto/Three-Phase\nDynamic Load4
+
+기존 To Workspace logging:
+V_1, I_1, ..., V_14, I_14
+```
+
+대표 parameter 이름:
+
+```text
+Fault block:
+FaultA, FaultB, FaultC, GroundFault, SwitchTimes, FaultResistance
+
+LoadSwitch block:
+InitialState, SwitchA, SwitchB, SwitchC, SwitchTimes
+
+LoadAdd block:
+ActivePower, InductivePower, CapacitivePower
+```
+
+---
+
+## 6. IEEE 30-bus 기존 분석 결과 요약
+
+IEEE 30-bus 쪽은 현재 논문 초안과 figure 생성의 핵심 evidence로 사용됩니다.
+
+### 6.1 Expanded 318-case dataset
+
+경로:
+
+```text
+data/WMU_final_combined_318_all_files
+```
+
+구성:
+
+| 항목 | 값 |
+|---|---:|
+| Raw CSV files | 318 |
+| Metadata rows | 318 |
+| Wide feature rows | 318 |
+| By-bus feature rows | 9540 |
+| Numeric full-WMU features | 2444 |
+
+Event subtype count:
+
+| EventSubtype | Count |
+|---|---:|
+| Normal | 3 |
+| LoadSwitch5pct | 21 |
+| LoadSwitch15pct | 21 |
+| LoadSwitch30pct | 21 |
+| CapSwitch15pct | 21 |
+| CapSwitch30pct | 21 |
+| SLG_Baseline | 30 |
+| SLG_Rf0p1 | 30 |
+| SLG_Rf1 | 30 |
+| SLG_Rf10 | 30 |
+| LL_AB | 30 |
+| LLG_ABG | 30 |
+| ThreePhase | 30 |
+
+### 6.2 318-case 1차 full-WMU 분석 결과
+
+결과 경로:
+
+```text
+results/expanded_318_full_analysis_20260629_142538
+```
+
+요약:
+
+| Task | Samples | Classes | Macro-F1 | Balanced Accuracy |
+|---|---:|---:|---:|---:|
+| Binary fault detection | 318 | 2 | 1.0000 | 1.0000 |
+| Event group fault/non-fault | 318 | 2 | 1.0000 | 1.0000 |
+| Event type | 318 | 7 | 1.0000 | 1.0000 |
+| Event subtype | 318 | 13 | 0.8513 | 0.8527 |
+| Fault type only | 210 | 4 | 1.0000 | 1.0000 |
+
+위 결과는 full-WMU 기준으로 이벤트 분류 가능성을 보여줍니다. 다만 EventSubtype에서는 같은 family 내 강도 차이, 특히 CapSwitch15/30 등이 더 어려운 문제로 나타났습니다.
+
+### 6.3 Validation audit 결과
+
+결과 경로:
+
+```text
+results/expanded_318_validation_audit_20260629_174558
+```
+
+핵심 확인 사항:
+
+| 항목 | 결과 |
+|---|---|
+| Feature leakage audit | FAIL/SUSPECT rows 0 |
+| Classification feature columns | 2443개 사용 |
+| TargetBus 처리 | classification feature에서 제외 |
+| Exact duplicate feature-row groups | 1개 |
+| EventType StratifiedKFold 3-fold Macro-F1 | 1.0000 |
+| Nested WMU selection best mean Macro-F1 | 1.0000 at k=6 |
+| CapSwitch15 vs CapSwitch30 binary Macro-F1 | 0.2731 |
+| SLG_Rf10 exact localization | 0.4000 |
+| SLG_Rf10 one-hop localization | 0.6333 |
+
+해석:
+
+- 기존 고성능 classification 결과는 단일 CV 설정에만 의존하지 않았습니다.
+- metadata/label/target leakage는 확인되지 않았습니다.
+- 하지만 CapSwitch 강도 분리와 고저항 SLG 위치추정은 여전히 어려운 subproblem입니다.
+
+### 6.4 Deduplicated 316-case revised evaluation
+
+결과 경로:
+
+```text
+results/expanded_318_evaluation_revision_20260629_214828
+```
+
+Normal duplicate 2개를 분석용 view에서만 제외하여 다음 구성으로 재평가했습니다.
+
+```text
+316 cases = Fault 210 + NonFault 106
+```
+
+최종 classification task:
+
+| Task | Samples | Classes | Macro-F1 | Balanced Accuracy | 비고 |
+|---|---:|---:|---:|---:|---|
+| Fault detection: Fault vs NonFault | 316 | 2 | 1.0000 | 1.0000 | OK |
+| EventType excluding Normal | 315 | 6 | 1.0000 | 1.0000 | OK |
+| EventSubtype excluding Normal | 315 | 12 | 0.8450 | 0.8472 | 강도 차이 subproblem 포함 |
+| FaultType classification | 210 | 4 | 1.0000 | 1.0000 | OK |
+
+Normal 포함 EventType/EventSubtype CV는 Normal class가 1개만 남아 stratified CV가 불가능하므로 descriptive only로 처리했습니다.
+
+---
+
+## 7. Fault localization 결과와 해석
+
+### 7.1 All-30 WMU localization
+
+Deduplicated 316-case view에서 fault cases 210개를 대상으로 한 all-30 WMU localization 결과입니다.
+
+| Metric | 값 |
+|---|---:|
+| Exact bus accuracy | 0.8333 |
+| One-hop accuracy | 0.9095 |
+| Top-2 accuracy | 0.8810 |
+| Top-3 accuracy | 0.9095 |
+| Mean graph distance | 0.3429 |
+| Median graph distance | 0.0000 |
+| Severe-error rate ≥ 2 | 0.0905 |
+| Severe-error rate ≥ 3 | 0.0571 |
+
+해석:
+
+- exact bus localization은 전력망에서는 매우 엄격한 기준입니다.
+- one-hop, graph-distance, severe-error rate를 함께 제시해야 계통 관점의 위치추정 성능이 더 정확히 설명됩니다.
+- Median graph distance가 0이라는 점은 많은 case가 정확 위치를 맞추지만, 일부 고저항/약한 contrast case가 평균과 severe-error를 악화시킴을 의미합니다.
+
+### 7.2 SLG_Rf10의 영향
+
+| Subset | Samples | Exact | One-hop | Mean graph distance | Severe-error ≥ 2 |
+|---|---:|---:|---:|---:|---:|
+| All fault cases | 210 | 0.8333 | 0.9095 | 0.3429 | 0.0905 |
+| Exclude SLG_Rf10 | 180 | 0.8222 | 0.9389 | 0.3000 | 0.0611 |
+| SLG family only | 120 | 0.8250 | 0.8833 | 0.3917 | 0.1167 |
+
+고저항 SLG fault인 `SLG_Rf10`은 fault-induced feature contrast가 약해 인접 bus와 구분이 어려워지는 경향이 있습니다. 논문에서는 이 점을 limitation이면서 동시에 physically interpretable failure mode로 설명할 수 있습니다.
+
+---
+
+## 8. WMU 배치 실험 요약
+
+### 8.1 Event classification-oriented selection
+
+기존 318-case full analysis에서는 event-type Macro-F1 기준 greedy selection에서 다음 결과가 나왔습니다.
+
+```text
+Best event-type Macro-F1 = 1.0000 at k=3
+Selected buses = 6, 1, 2
+
+First k within 0.01 of best = k=1
+Selected bus = 6
+Macro-F1 = 0.9952
+```
+
+Validation audit의 nested WMU selection에서는 다음을 확인했습니다.
+
+```text
+Best nested mean Macro-F1 = 1.0000 at k=6
+```
+
+즉, event classification 자체는 비교적 소수 WMU로도 매우 강하게 가능하다는 evidence가 있습니다.
+
+### 8.2 Localization-aware selection
+
+Localization-aware greedy selection 결과는 다음 경로에 있습니다.
+
+```text
+results/expanded_318_evaluation_revision_20260629_214828/localization_aware_wmu_selection_curve.csv
+results/expanded_318_evaluation_revision_20260629_214828/multi_objective_wmu_selection_summary.csv
+```
+
+대표 multi-objective 후보:
+
+| k | Selected buses | FaultDetection Macro-F1 | EventType no-Normal Macro-F1 | Exact | One-hop | Mean graph distance | Severe-error ≥ 2 |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 20 | 22 11 4 5 25 7 3 8 14 28 9 27 13 18 26 2 17 10 23 1 | 1.0000 | 1.0000 | 0.7143 | 0.9143 | 0.4905 | 0.0857 |
+| 27 | 22 11 4 5 25 7 3 8 14 28 9 27 13 18 26 2 17 10 23 1 30 6 16 29 19 21 20 | 1.0000 | 1.0000 | 0.8381 | 0.9286 | 0.3000 | 0.0714 |
+| 30 | 22 11 4 5 25 7 3 8 14 28 9 27 13 18 26 2 17 10 23 1 30 6 16 29 19 21 20 12 24 15 | 1.0000 | 1.0000 | 0.8333 | 0.9000 | 0.3667 | 0.1000 |
+
+주의:
+
+- 이 selection은 nested가 아니라 greedy coupled CV 기반입니다.
+- 따라서 최종 논문에서는 “최종 최적 배치 확정”이 아니라 “localization-aware 재설계의 1차 evidence”로 표현해야 안전합니다.
+- 정확한 minimum claim을 하려면 exhaustive search 또는 nested localization-aware CV가 필요합니다.
+
+---
+
+## 9. 논문에서 사용할 계층 목적함수
+
+PPT의 방향을 반영하면 최종 배치 문제는 다음과 같이 쓸 수 있습니다.
+
+```text
+maximize_S    LocalizationScore(S)
+
+subject to
+    FaultNonFaultF1(S) ≥ 0.98
+    FalseAlarmRate(S) ≤ 0.02
+    FaultMissRate(S) ≤ 0.02
+    EventMacroF1(S) ≥ 목표값
+    |S| ≤ K
+```
+
+LocalizationScore는 논문 방향에 따라 다음 중 하나 또는 조합으로 둘 수 있습니다.
+
+```text
+ExactBusAccuracy
+OneHopAccuracy
+Top3Accuracy
+- MeanGraphDistance
+- SevereErrorRate_GE2
+ZoneAccuracy
+```
+
+추천 서술은 다음과 같습니다.
+
+> 본 연구는 event classification을 hard constraint로 두고, 해당 조건을 만족하는 WMU placement 중 fault localization metric을 최대화하는 계층형 multi-objective placement 문제로 정식화한다.
+
+---
+
+## 10. 논문 작성 시 추천 구조
+
+### Abstract
+
+- SSO background가 있는 환경에서 WMU 기반 event classification 및 fault localization 문제 제기
+- IEEE benchmark system 기반 waveform dataset 생성
+- classification-constrained placement와 localization-aware placement 제안
+- 핵심 수치: fault detection/event type/FaultType 1.0, localization exact/one-hop, trade-off 결과
+
+### 1. Introduction
+
+- IBR/wind integration 증가와 SSO 문제
+- SSO 환경에서 transient event diagnosis가 어려워지는 이유
+- WMU/PMU 설치 수 제한 문제
+- 단순 event classification이 아니라 localization까지 필요한 이유
+- 본 논문의 contribution 3~4개 제시
+
+### 2. System and Dataset
+
+- IEEE 30-bus 기존 dataset
+- IEEE 14-bus 신규 SSO sweep dataset 설계
+- SSO background 정의
+- event 종류와 case count
+- waveform column 구조
+- leakage 방지: onset time 통일
+
+### 3. Feature Extraction and Learning Tasks
+
+- raw V/I waveform에서 bus별 feature 추출
+- full-WMU feature와 reduced-WMU feature 구성
+- metadata/label/target column 제외 원칙
+- task 정의:
+  - fault detection
+  - event type classification
+  - event subtype classification
+  - fault type classification
+  - fault localization
+
+### 4. Hierarchical WMU Placement Method
+
+- Stage 1: classification constraint
+- Stage 2: localization objective
+- greedy/nested/exhaustive search 구분
+- graph-distance/one-hop/zone metric 정의
+
+### 5. Results
+
+- classification 결과
+- validation audit 결과
+- WMU sensor-count curve
+- localization 결과
+- SLG_Rf10 failure analysis
+- multi-objective placement trade-off
+
+### 6. Discussion
+
+- event classification은 소수 WMU로 가능
+- localization은 더 많은/다른 WMU가 필요
+- exact bus와 one-hop/zone metric의 해석 차이
+- SSO frequency/magnitude 확장 dataset의 의미
+- synthetic simulation limitation
+
+### 7. Conclusion
+
+- SSO 환경에서 계층형 WMU 진단의 가능성
+- classification robustness와 localization trade-off
+- 후속 연구: IEEE 14-bus 553-case 전체 완료 후 재평가, noise/missing data, nested localization-aware CV, electrical-distance metric
+
+---
+
+## 11. 저장소 구조
+
+```text
+WMU_project/
+├── README.md                                      # 현재 파일: 연구 전체 안내
+├── docs/
+│   ├── research_summary.md
+│   ├── waveform_dataset_notes.md
+│   ├── waveform_event_analysis.md
+│   ├── waveform_feature_definitions.md
+│   └── waveform_ibr_sso_scenario.md
+├── scripts/
+│   ├── run_waveform_event_analysis.py
+│   ├── run_waveform_classification.py
+│   ├── run_waveform_sensor_selection.py
+│   ├── run_waveform_localization.py
+│   ├── run_expanded_318_validation_audit.py
+│   ├── run_expanded_318_evaluation_revision.py
+│   └── matlab/
+│       └── run_wmu_ibr_additional_192_batch.m
+├── src/wmu_project/
+│   ├── waveform_io.py
+│   ├── waveform_quality.py
+│   ├── waveform_features.py
+│   ├── waveform_classification.py
+│   ├── waveform_sensor_selection.py
+│   ├── waveform_localization.py
+│   └── waveform_utils.py
+├── data/
+│   └── WMU_final_combined_318_all_files/
+├── results/
+│   ├── expanded_318_full_analysis_20260629_142538/
+│   ├── expanded_318_validation_audit_20260629_174558/
+│   ├── expanded_318_evaluation_revision_20260629_214828/
+│   ├── waveform_event_analysis/
+│   ├── waveform_ibr_background_analysis/
+│   └── waveform_ibr_background_diagnostics/
+└── wmu_two_stage_latex_paper/
+    ├── README.md
+    ├── main.tex
+    ├── main_ko.tex
+    ├── references.bib
+    ├── figures/
+    ├── WMU_two_stage_paper_draft.pdf
+    └── WMU_two_stage_paper_draft_ko.pdf
+```
+
+---
+
+## 12. 논문 workspace 사용법
+
+논문 초안은 다음 폴더에 있습니다.
 
 ```bash
-.venv/bin/python scripts/run_ibr_background_diagnostics.py \
-  --data-dir /mnt/c/Users/user/Documents/MATLAB/WMU_final/WMU_batch_data_ibr_background \
-  --source-results-dir /mnt/c/Users/user/Documents/MATLAB/WMU_final/WMU_batch_data_ibr_background
+cd /home/hy/WMU_project/wmu_two_stage_latex_paper
 ```
+
+VS Code로 열기:
+
+```bash
+code /home/hy/WMU_project/wmu_two_stage_latex_paper
+```
+
+| 버전 | Source | Preview PDF | Build output |
+|---|---|---|---|
+| English | `main.tex` | `WMU_two_stage_paper_draft.pdf` | `build/main.pdf` |
+| Korean | `main_ko.tex` | `WMU_two_stage_paper_draft_ko.pdf` | `build_ko/main_ko.pdf` |
+
+수동 빌드:
+
+```bash
+latexmk -xelatex -interaction=nonstopmode -file-line-error -synctex=1 -outdir=build main.tex
+latexmk -xelatex -interaction=nonstopmode -file-line-error -synctex=1 -outdir=build_ko main_ko.tex
+```
+
+현재 포함된 figure 구성:
+
+| Figure | 내용 |
+|---|---|
+| Fig. 1 | Proposed two-stage framework |
+| Fig. 2 | Detection confusion matrix for Bus 27 |
+| Fig. 3 | Minimum WMU count for zone localization |
+| Fig. 4 | Selected 8-WMU placement on IEEE 30-bus topology |
+| Fig. 5 | Zone localization confusion matrix |
+| Fig. 6 | Current disturbance argmax explanation |
+
+---
+
+## 13. 주요 결과 파일 바로가기
+
+### 13.1 318-case full analysis
+
+```text
+results/expanded_318_full_analysis_20260629_142538/expanded_318_analysis_summary.md
+results/expanded_318_full_analysis_20260629_142538/localization_summary_metrics.csv
+```
+
+### 13.2 Validation audit
+
+```text
+results/expanded_318_validation_audit_20260629_174558/expanded_318_validation_audit_summary.md
+results/expanded_318_validation_audit_20260629_174558/feature_leakage_audit.csv
+results/expanded_318_validation_audit_20260629_174558/cv_protocol_comparison_metrics.csv
+results/expanded_318_validation_audit_20260629_174558/nested_wmu_selection_event_type_curve.csv
+results/expanded_318_validation_audit_20260629_174558/model_comparison_classification.csv
+results/expanded_318_validation_audit_20260629_174558/model_comparison_localization.csv
+```
+
+### 13.3 Revised 316-case evaluation
+
+```text
+results/expanded_318_evaluation_revision_20260629_214828/expanded_318_revised_evaluation_summary.md
+results/expanded_318_evaluation_revision_20260629_214828/revised_classification_metrics_table.csv
+results/expanded_318_evaluation_revision_20260629_214828/revised_localization_main_metrics.csv
+results/expanded_318_evaluation_revision_20260629_214828/localization_aware_wmu_selection_curve.csv
+results/expanded_318_evaluation_revision_20260629_214828/multi_objective_wmu_selection_summary.csv
+```
+
+### 13.4 논문 초안
+
+```text
+wmu_two_stage_latex_paper/main.tex
+wmu_two_stage_latex_paper/main_ko.tex
+wmu_two_stage_latex_paper/WMU_two_stage_paper_draft.pdf
+wmu_two_stage_latex_paper/WMU_two_stage_paper_draft_ko.pdf
+```
+
+---
+
+## 14. 실행 환경
+
+현재 작업 기준 환경:
+
+| 항목 | 값 |
+|---|---|
+| OS | Linux |
+| MATLAB/Simulink | MATLAB R2024a 사용 권장 |
+| Python | Python 3.11 계열 |
+| LaTeX | TinyTeX/TeX Live + latexmk + xelatex |
+| VS Code | LaTeX Workshop 사용 |
+
+중요:
+
+- WMU/Simulink 실험은 MATLAB R2024a 기준으로 관리합니다.
+- 원본 `.mdl`/`.slx`는 직접 덮어쓰지 않고 작업용 복사본을 사용합니다.
+- raw waveform, 대용량 `.mat`, `.slx`, 중간 산출물은 git에 포함하지 않는 것이 원칙입니다.
+
+---
+
+## 15. Git hygiene
+
+이 저장소는 다음 대용량/로컬 산출물을 기본적으로 제외합니다.
+
+```text
+*.xlsx
+*.mat
+*.slx
+WMU_batch_raw/
+WMU_batch_data/
+outputs/
+results/raw/
+results/intermediate/
+build/
+build_ko/
+```
+
+Git에 포함하는 것은 다음 위주입니다.
+
+- 분석 코드
+- compact summary CSV
+- 검증 report markdown
+- paper-ready figure
+- LaTeX source
+- preview PDF
+- README 및 문서
+
+---
+
+## 16. 현재 논문 작성 시 주의해야 할 표현
+
+안전한 표현:
+
+- “evaluated deterministic simulation cases에서 zero/near-zero error를 보였다”
+- “specified dataset, feature set, placement rule, metric 아래에서 최소/최적 후보로 확인되었다”
+- “exact bus 기준은 엄격하므로 one-hop 및 graph-distance 지표와 함께 해석한다”
+- “classification-constrained localization-aware placement evidence”
+
+피해야 할 표현:
+
+- “모든 실제 계통에서 100% 보장”
+- “전역 최적 배치가 증명되었다”
+- “deployment-ready fault localization”
+- “SSO 환경 전체를 완전히 일반화했다”
+
+---
+
+## 17. 다음 작업 TODO
+
+1. IEEE 14-bus 553-case 실행 완료 확인
+   - `SUCCESS=553`, `FAILED=0`
+   - `dataset_summary.csv`, `data_quality_summary.csv`, `run_summary.txt` 생성 확인
+2. 14-bus raw CSV에서 feature table 생성
+3. 14-bus SSO frequency/magnitude별 classification/localization 성능 비교
+4. 30-bus 기존 결과와 14-bus 신규 결과를 논문에서 어떻게 나눠 제시할지 결정
+5. localization-aware selection을 nested CV 또는 exhaustive search로 보강
+6. zone 정의를 고정한 뒤 zone localization metric을 최종 figure/table에 반영
+7. `main.tex`와 `main_ko.tex`를 최신 PPT 구조에 맞춰 개정
+
+---
+
+## 18. 논문용 핵심 문장 초안
+
+아래 문장들은 Introduction/Method/Conclusion에 바로 옮겨 쓸 수 있는 형태입니다.
+
+1. 본 연구는 IBR-like SSO가 배경조건으로 존재하는 benchmark power system에서 WMU waveform을 이용한 계층형 이벤트 진단 및 고장 위치추정 문제를 다룬다.
+2. 제안 구조는 fault/non-fault discrimination과 event-type classification을 우선 hard constraint로 두고, 해당 조건을 만족하는 WMU placement 중 fault localization 성능을 최대화한다.
+3. IEEE 30-bus expanded 318-case dataset의 revised evaluation에서 fault detection, event-type classification excluding Normal, fault-type classification은 모두 Macro-F1 1.0000을 달성했다.
+4. 반면 event subtype classification은 Macro-F1 0.8450으로 낮아졌으며, 이는 같은 switching family 내 강도 차이와 같은 세부 구분이 더 어려운 문제임을 보여준다.
+5. All-30 WMU fault localization은 exact bus accuracy 0.8333, one-hop accuracy 0.9095를 보였으며, exact metric만으로는 전력망 위치추정 성능을 충분히 설명하기 어렵다.
+6. SLG_Rf10은 고저항 고장으로 feature contrast가 약해져 localization 성능 저하에 기여하며, 이는 물리적으로 해석 가능한 failure mode이다.
+7. Event classification-oriented WMU placement와 localization-aware placement는 서로 다른 sensor preference를 보이므로, SSO 환경의 실용적 WMU 배치에는 multi-objective trade-off 분석이 필요하다.
+8. 최신 IEEE 14-bus 553-case dataset은 SSO 주파수와 진폭을 명시적으로 sweep하여, 기존 IEEE 30-bus 결과를 SSO background 조건별로 재검증하기 위한 후속 benchmark로 사용된다.
