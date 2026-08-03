@@ -12,6 +12,13 @@ WMU_batch_data/
 outputs/
 results/raw/
 results/intermediate/
+analysis_basic_v1/
+features_basic_v1/
+results_basic_v1/
+figures_basic_v1/
+*.parquet
+*.pkl
+*.csv.gz
 *.egg-info/
 WMU_batch_raw_ibr_background/
 WMU_batch_data_ibr_background/

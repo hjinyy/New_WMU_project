@@ -832,3 +832,198 @@ Git에 포함하는 것은 다음 위주입니다.
 6. SLG_Rf10은 고저항 고장으로 feature contrast가 약해져 localization 성능 저하에 기여하며, 이는 물리적으로 해석 가능한 failure mode이다.
 7. Event classification-oriented WMU placement와 localization-aware placement는 서로 다른 sensor preference를 보이므로, SSO 환경의 실용적 WMU 배치에는 multi-objective trade-off 분석이 필요하다.
 8. 최신 IEEE 14-bus 553-case dataset은 SSO 주파수와 진폭을 명시적으로 sweep하여, 기존 IEEE 30-bus 결과를 SSO background 조건별로 재검증하기 위한 후속 benchmark로 사용된다.
+
+---
+
+## 19. Basic v1 IEEE 14/30 WMU waveform ML 분석 구현 상태
+
+2026-08-03 기준으로 기존 raw waveform dataset을 재생성하지 않고, IEEE 14-bus와 IEEE 30-bus WMU waveform을 이용한 기본 feature extraction 및 ML baseline 분석을 구현·실행했습니다.
+
+### 19.1 코드 위치
+
+```text
+src/wmu_project/basic_v1/pipeline.py
+scripts/run_basic_v1_wmu_analysis.py
+tests/test_basic_v1_pipeline.py
+```
+
+구현 범위:
+
+- 기존 데이터/manifest 경로 자동 탐색
+- manifest 및 raw waveform 로드
+- IEEE14/IEEE30 CSV header 형식 차이 처리
+- case × WMU bus 단위 기본 feature extraction
+- GroupKFold 기반 split 저장
+- RandomForest / ExtraTrees full-WMU baseline
+- SSO background holdout 평가
+- greedy forward WMU selection
+- event classification, fault/non-fault, fault localization metric 계산
+- topology graph-distance / one-hop metric 계산
+- 최소 figure 및 Markdown summary 생성
+
+### 19.2 실제 사용한 입력 경로
+
+```text
+/run/media/hy/새 볼륨/WMU_project/IEEE14bus/manifests/case_manifest.csv
+/run/media/hy/새 볼륨/WMU_project/IEEE14bus/raw_csv
+/run/media/hy/새 볼륨/WMU_project/IEEE30bus/manifests/case_manifest_30bus.csv
+/run/media/hy/새 볼륨/WMU_project/IEEE30bus/raw_csv
+```
+
+### 19.3 새 결과 경로
+
+```text
+/run/media/hy/새 볼륨/WMU_project/analysis_basic_v1/
+├── features_basic_v1/
+├── results_basic_v1/
+├── figures_basic_v1/
+├── logs/
+└── splits/
+```
+
+대용량 feature/result 파일은 Git에 포함하지 않고 기존 데이터 저장 위치 아래에 유지합니다.
+
+### 19.4 Feature 정의
+
+각 case와 각 WMU bus를 하나의 행으로 구성합니다.
+
+- 전압 RMS: pre/event/post phase RMS, sag ratio, phase RMS mean/std, event min voltage
+- 전류 RMS: pre/event/post phase RMS, current jump ratio, phase RMS mean/std, event max current
+- Sequence/unbalance: V1, V2/V1, V0/V1, I1, I2/I1, I0/I1
+- 주파수: 설정 SSO 주파수 주변 energy, 5~45 Hz energy, 50 Hz magnitude, dominant low-frequency component
+- 변화량: pre-to-event / pre-to-post voltage/current change
+- Metadata: NetworkID, CaseID, BackgroundName, SSOFrequencyHz, SSOMagnitudePct, EventType, EventBus, WMUBus, IsFault
+
+현재 실행 환경에는 `pyarrow`가 없어 Parquet 대신 `csv.gz`와 `pkl` fallback으로 저장했습니다.
+
+### 19.5 분석 task와 leakage 방지
+
+분석 task:
+
+1. Fault / Non-fault classification
+2. 7-class event classification: Normal, LoadSwitch, CapSwitch, SLG, LL, LLG, ThreePhase
+3. Fault bus localization: fault case만 사용, label = EventBus
+
+Leakage 방지:
+
+- IEEE14와 IEEE30은 하나의 모델로 합치지 않고 독립적으로 학습·평가합니다.
+- 동일 `CaseID`의 여러 WMU bus row가 train/test로 갈라지지 않도록 case-wide matrix로 결합한 뒤 평가합니다.
+- 기본 CV는 `GroupKFold(n_splits=5)`, group=`CaseID`입니다.
+- 각 split의 train/test CaseID 목록은 `analysis_basic_v1/splits/`에 저장됩니다.
+- 결측 처리와 모델 학습은 scikit-learn Pipeline 내부에서 fold별 train data 기준으로 수행합니다.
+
+### 19.6 실제 실행 결과 요약
+
+| Network | Manifest rows | Used cases | Feature rows | WMU buses | Excluded cases |
+|---|---:|---:|---:|---:|---:|
+| IEEE14 | 553 | 550 | 7,700 | 14 | 3 |
+| IEEE30 | 1,127 | 1,127 | 33,810 | 30 | 0 |
+
+Smoke test:
+
+```text
+IEEE14: PASS, 5 cases × 14 bus = 70 rows
+IEEE30: PASS, 5 cases × 30 bus = 150 rows
+```
+
+Unit/integration test:
+
+```text
+pytest -q tests/test_basic_v1_pipeline.py
+7 passed
+```
+
+Full-WMU baseline 핵심 결과:
+
+| Network | Model | 7-class Macro-F1 | Fault F1 | False alarm | Fault miss | Localization exact | One-hop | Top-3 | Graph-distance MAE |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| IEEE14 | RandomForest | 0.975880 | 1.000000 | 0.000000 | 0.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
+| IEEE14 | ExtraTrees | 0.987012 | 1.000000 | 0.000000 | 0.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
+| IEEE30 | RandomForest | 1.000000 | 1.000000 | 0.000000 | 0.000000 | 0.000000 | 0.832143 | 0.465476 | 1.246429 |
+| IEEE30 | ExtraTrees | 1.000000 | 1.000000 | 0.000000 | 0.000000 | 0.000000 | 0.791667 | 0.405952 | 1.400000 |
+
+### 19.7 Greedy WMU 비교 결과
+
+결과 파일:
+
+```text
+analysis_basic_v1/results_basic_v1/wmu_count_comparison_ieee14.csv
+analysis_basic_v1/results_basic_v1/wmu_count_comparison_ieee30.csv
+```
+
+IEEE14 classification placement:
+
+```text
+k=1: 3
+k=2: 3;2
+k=3: 3;2;1
+k=5: 3;2;1;5;4
+k=14: 3;2;1;5;4;13;12;11;14;9;6;10;8;7
+```
+
+IEEE14 localization placement:
+
+```text
+k=1: 1
+k=2: 1;2
+k=3: 1;2;3
+k=5: 1;2;3;4;5
+k=14: 1;2;3;4;5;6;7;8;9;10;11;12;13;14
+```
+
+IEEE30 classification placement:
+
+```text
+k=1: 9
+k=3: 9;1;2
+k=5: 9;1;2;4;3
+k=10: 9;1;2;4;3;6;5;7;8;10
+k=30: 9;1;2;4;3;6;5;7;8;10;11;12;13;14;15;16;17;19;18;20;21;22;23;24;25;26;27;29;28;30
+```
+
+IEEE30 localization placement:
+
+```text
+k=1: 1
+k=3: 1;2;3
+k=5: 1;2;3;4;5
+k=10: 1;2;3;4;5;6;7;8;9;10
+k=30: 1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30
+```
+
+### 19.8 생성 figure
+
+각 계통별로 다음 PNG를 생성합니다.
+
+```text
+figures_basic_v1/ieee14/wmu_count_macro_f1.png
+figures_basic_v1/ieee14/wmu_count_localization_exact.png
+figures_basic_v1/ieee14/full_wmu_7class_confusion_matrix.png
+figures_basic_v1/ieee14/placement_selected_bus_compare.png
+figures_basic_v1/ieee14/classification_localization_cross_performance.png
+figures_basic_v1/ieee30/wmu_count_macro_f1.png
+figures_basic_v1/ieee30/wmu_count_localization_exact.png
+figures_basic_v1/ieee30/full_wmu_7class_confusion_matrix.png
+figures_basic_v1/ieee30/placement_selected_bus_compare.png
+figures_basic_v1/ieee30/classification_localization_cross_performance.png
+```
+
+### 19.9 실행 방법
+
+```bash
+pytest -q tests/test_basic_v1_pipeline.py
+python3 scripts/run_basic_v1_wmu_analysis.py --mode smoke --networks ieee14 ieee30
+python3 scripts/run_basic_v1_wmu_analysis.py --mode features --networks ieee14 ieee30
+python3 scripts/run_basic_v1_wmu_analysis.py --mode baseline --networks ieee14 ieee30
+python3 scripts/run_basic_v1_wmu_analysis.py --mode holdout --networks ieee14 ieee30
+python3 scripts/run_basic_v1_wmu_analysis.py --mode greedy --networks ieee14 ieee30
+python3 scripts/run_basic_v1_wmu_analysis.py --mode plots --networks ieee14 ieee30
+```
+
+### 19.10 알려진 한계와 후속 확인 항목
+
+- IEEE14 manifest는 553행이나 실제 존재하는 raw CSV는 550개였습니다. 제외 case는 `ieee14_excluded_cases.csv`에 기록됩니다.
+- IEEE14 manifest의 `Status`는 `PENDING`으로 남아 있으므로 현재 분석은 CSV 존재/형식 검증을 기준으로 사용 가능 case를 판정합니다.
+- IEEE30 event classification은 1.0에 가깝지만, exact-bus localization은 현재 basic feature/label 구성에서 0으로 나왔습니다. one-hop 기준은 약 0.79~0.83이므로 exact localization label mapping, topology 기준, feature 정의를 추가 점검해야 합니다.
+- Greedy candidate search는 속도 때문에 10-tree ExtraTrees를 사용했습니다. Full-WMU baseline은 120-tree RandomForest/ExtraTrees 결과입니다.
+- 복잡한 nested CV, exhaustive placement search, deep learning model은 아직 구현하지 않았습니다.
