@@ -17,6 +17,7 @@ from wmu_project.basic_v1.pipeline import (  # noqa: E402
     fault_binary_metrics,
     graph_distance_matrix,
     grouped_cv_predict,
+    localization_metrics,
 )
 from sklearn.dummy import DummyClassifier
 from sklearn.pipeline import Pipeline
@@ -90,7 +91,79 @@ def test_classification_metrics():
     assert bm["FaultMissRate"] > 0
 
 
+def test_grouped_cv_stratifies_classes_with_case_groups(tmp_path):
+    rows = []
+    for cls in range(1, 7):
+        for rep in range(6):
+            cid = cls * 100 + rep
+            rows.append({"NetworkID":"x","CaseID":cid,"BackgroundName":"NoSSO","SSOFrequencyHz":25,"SSOMagnitudePct":0,"EventType":"SLG","EventBus":cls,"WMUBus":1,"IsFault":True,"f":float(cls)})
+    mat = case_matrix(pd.DataFrame(rows), [1])
+    model = Pipeline([("imputer", SimpleImputer()), ("model", DummyClassifier(strategy="most_frequent"))])
+    split_file = tmp_path / "splits.csv"
+    grouped_cv_predict(mat, "EventBus", model, split_file)
+    splits = pd.read_csv(split_file)
+    labels = mat.set_index("CaseID")["EventBus"].to_dict()
+    for fold, g in splits.groupby("Fold"):
+        train_classes = {labels[c] for c in g[g.Split == "train"].CaseID}
+        test_classes = {labels[c] for c in g[g.Split == "test"].CaseID}
+        assert train_classes == set(range(1, 7))
+        assert test_classes.issubset(set(range(1, 7)))
+
+
 def test_result_file_creation(tmp_path):
     p = tmp_path / "out.csv"
     pd.DataFrame([{"a": 1}]).to_csv(p, index=False)
     assert p.exists() and p.stat().st_size > 0
+
+
+def test_localization_integer_exact_match():
+    actual = np.array([1, 2, 14, 30])
+    pred = np.array([1, 2, 14, 30])
+    met = localization_metrics("ieee30", actual, pred, None, None)
+    assert met["ExactBusAccuracy"] == 1.0
+    assert met["GraphDistanceMAE"] == 0.0
+
+
+def test_localization_string_label_normalization():
+    actual = np.array(["1", "2", "14", "30"])
+    pred = np.array(["1", "2", "14", "30"])
+    met = localization_metrics("ieee30", actual, pred, None, None)
+    assert met["ExactBusAccuracy"] == 1.0
+
+
+def test_localization_one_hop_distance_real_topology():
+    actual = np.array([1, 2, 3])
+    pred = np.array([2, 1, 4])
+    met = localization_metrics("ieee30", actual, pred, None, None)
+    assert met["ExactBusAccuracy"] == 0.0
+    assert met["OneHopAccuracy"] == 1.0
+    dm = graph_distance_matrix("ieee30")
+    assert dm[(1, 2)] == 1
+    assert dm[(2, 3)] >= 2
+
+
+def test_top3_bus_label_mapping_not_argmax_index():
+    actual = np.array([30])
+    pred = np.array([29])
+    classes = np.array([28, 29, 30])
+    proba = np.array([[0.1, 0.2, 0.7]])
+    met = localization_metrics("ieee30", actual, pred, proba, classes)
+    assert met["Top3Accuracy"] == 1.0
+    assert met["ExactBusAccuracy"] == 0.0
+
+
+def test_encoded_label_inverse_transform_equivalent():
+    encoded_pred = np.array([0, 1, 2])
+    encoder_classes = np.array([1, 14, 30])
+    pred_bus = encoder_classes[encoded_pred]
+    actual = np.array([1, 14, 30])
+    met = localization_metrics("ieee30", actual, pred_bus, None, None)
+    assert met["ExactBusAccuracy"] == 1.0
+
+
+def test_invalid_bus_distance_does_not_fake_exact():
+    actual = np.array([1])
+    pred = np.array([0])
+    met = localization_metrics("ieee30", actual, pred, None, None)
+    assert met["ExactBusAccuracy"] == 0.0
+    assert np.isnan(met["GraphDistanceMAE"])

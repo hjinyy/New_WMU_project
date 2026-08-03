@@ -23,6 +23,8 @@ from wmu_project.basic_v1.pipeline import (  # noqa: E402
     greedy_wmu_comparison,
     plot_network_results,
     write_summary,
+    write_model_feature_columns,
+    write_localization_debug_predictions,
 )
 
 
@@ -38,7 +40,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run basic_v1 IEEE14/IEEE30 WMU feature and ML analysis")
     parser.add_argument("--project-root", default=str(PROJECT_ROOT))
     parser.add_argument("--networks", nargs="+", default=["ieee14", "ieee30"], choices=["ieee14", "ieee30"])
-    parser.add_argument("--mode", choices=["smoke", "features", "baseline", "greedy", "holdout", "plots", "all"], default="all")
+    parser.add_argument("--mode", choices=["smoke", "features", "baseline", "greedy", "holdout", "plots", "debug", "all"], default="all")
     parser.add_argument("--limit-cases", type=int, default=None)
     parser.add_argument("--skip-existing-features", action="store_true")
     args = parser.parse_args()
@@ -92,6 +94,13 @@ def main() -> int:
             print(f"[greedy] {nid}", flush=True)
             cmp = greedy_wmu_comparison(nid, ff, net.n_buses, k_map[nid], paths.results_dir)
             print(cmp[["NetworkID", "PlacementObjective", "k", "SelectedWMUBuses", "MacroF1", "FaultF1", "ExactBusAccuracy", "OneHopAccuracy", "Top3Accuracy", "GraphDistanceMAE"]].to_string(index=False), flush=True)
+
+    if args.mode in ["debug", "all"]:
+        for nid, net in networks.items():
+            ff = _feature_file(paths, nid)
+            print(f"[debug] {nid}", flush=True)
+            write_model_feature_columns(nid, ff, net.n_buses, paths.results_dir)
+            write_localization_debug_predictions(nid, ff, net.n_buses, paths.results_dir)
 
     if args.mode in ["plots", "all"]:
         for nid in networks:

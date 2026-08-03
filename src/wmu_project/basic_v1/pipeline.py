@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import os
 import time
+import json
+import hashlib
 import numpy as np
 import pandas as pd
 from scipy.signal import detrend
@@ -17,7 +19,7 @@ from sklearn.metrics import (
     f1_score,
     precision_recall_fscore_support,
 )
-from sklearn.model_selection import GroupKFold
+from sklearn.model_selection import GroupKFold, StratifiedGroupKFold
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -57,7 +59,7 @@ def discover_network_paths(project_root: Path | str) -> dict[str, NetworkPaths]:
     project_root = Path(project_root).resolve()
     envs = [os.environ.get(k) for k in ("WMU_PROJECT_ROOT", "WMU_DATA_ROOT", "WMU_RESULTS_ROOT") if os.environ.get(k)]
     roots = [Path(x).expanduser() for x in envs]
-    roots += [Path("/run/media/hy/새 볼륨/WMU_project"), Path("/새볼륨/WMU_project"), Path("/WMU_project"), project_root]
+    roots += [project_root, Path("/home/hy/WMU_project_doc"), Path("/home/hy/문서/WMU_project"), Path("/run/media/hy/새 볼륨/WMU_project"), Path("/새볼륨/WMU_project"), Path("/WMU_project")]
     found: dict[str, NetworkPaths] = {}
     specs = {
         "ieee14": ("IEEE14bus/manifests/case_manifest.csv", 14),
@@ -114,13 +116,16 @@ def load_manifest(path: Path | str) -> pd.DataFrame:
 
 def resolve_output_csv(row: pd.Series, manifest_path: Path) -> Path:
     p = Path(str(row.get("OutputCSV", "")))
-    if p.exists():
-        return p
-    if not p.is_absolute():
-        q = manifest_path.parent / p
+    raw_dir = manifest_path.parents[1] / "raw_csv"
+    candidates: list[Path] = []
+    if p.is_absolute():
+        candidates.extend([p, raw_dir / p.name])
+    else:
+        candidates.extend([manifest_path.parent / p, raw_dir / p, raw_dir / p.name, p])
+    for q in candidates:
         if q.exists():
             return q
-    return p
+    return candidates[0] if candidates else p
 
 def load_waveform_csv(path: Path | str, n_buses: int) -> pd.DataFrame:
     path = Path(path)
@@ -316,9 +321,16 @@ def extract_features_for_network(network: NetworkPaths, out_dir: Path, limit_cas
     out_dir.mkdir(parents=True, exist_ok=True)
     feature_file = save_table(features, out_dir / f"{network.network_id}_features")
     excluded_df.to_csv(out_dir / f"{network.network_id}_excluded_cases.csv", index=False)
+    manifest_hash = hashlib.sha256(Path(network.manifest).read_bytes()).hexdigest()
+    valid_raw_csv = 0
+    for _, mrow in manifest.iterrows():
+        if resolve_output_csv(mrow, network.manifest).exists():
+            valid_raw_csv += 1
     summary = pd.DataFrame([{
         "NetworkID": network.network_id,
         "ManifestRows": len(work),
+        "ManifestHashSHA256": manifest_hash,
+        "ValidRawCSV": valid_raw_csv,
         "UsedCases": int(features["CaseID"].nunique()) if not features.empty else 0,
         "FeatureRows": len(features),
         "Buses": network.n_buses,
@@ -383,27 +395,39 @@ def grouped_cv_predict(matrix: pd.DataFrame, target: str, model: Pipeline, split
     y = matrix[target].to_numpy()
     groups = matrix["CaseID"].to_numpy()
     n_splits = min(5, len(np.unique(groups)))
-    gkf = GroupKFold(n_splits=n_splits)
+    # Grouping by CaseID prevents same-case leakage across folds. Plain
+    # GroupKFold is unsafe for ordered manifests: in IEEE30 it placed some
+    # fault-bus classes only in the test fold, making exact localization
+    # structurally impossible. StratifiedGroupKFold keeps case grouping while
+    # preserving target-class coverage in each fold.
+    splitter = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_SEED)
+    try:
+        fold_iter = list(splitter.split(x, y, groups=groups))
+    except ValueError:
+        fold_iter = list(GroupKFold(n_splits=n_splits).split(x, y, groups))
     pred = np.empty(len(matrix), dtype=object)
-    proba_rows: list[np.ndarray | None] = [None] * len(matrix)
-    classes = None
+    global_classes = np.asarray(sorted(pd.Series(y).dropna().unique(), key=lambda v: (str(type(v)), v)))
+    proba = np.full((len(matrix), len(global_classes)), np.nan, dtype=float)
+    class_to_col = {c: i for i, c in enumerate(global_classes)}
     split_rows = []
-    for fold, (tr, te) in enumerate(gkf.split(x, y, groups), 1):
+    for fold, (tr, te) in enumerate(fold_iter, 1):
         m = clone(model)
         m.fit(x.iloc[tr], y[tr])
         pred[te] = m.predict(x.iloc[te])
         if hasattr(m, "predict_proba"):
             pp = m.predict_proba(x.iloc[te])
-            classes = np.asarray(m.classes_)
-            for idx, pr in zip(te, pp):
-                proba_rows[idx] = pr
+            for local_col, cls in enumerate(getattr(m, "classes_")):
+                if cls in class_to_col:
+                    proba[te, class_to_col[cls]] = pp[:, local_col]
         split_rows.extend({"Fold": fold, "Split": "train", "CaseID": int(c)} for c in matrix.iloc[tr]["CaseID"])
         split_rows.extend({"Fold": fold, "Split": "test", "CaseID": int(c)} for c in matrix.iloc[te]["CaseID"])
     if splits_file is not None:
         splits_file.parent.mkdir(parents=True, exist_ok=True)
         pd.DataFrame(split_rows).drop_duplicates().to_csv(splits_file, index=False)
-    proba = np.vstack(proba_rows) if classes is not None and all(p is not None for p in proba_rows) else None
-    return pred, proba, classes
+    proba_out = proba if np.isfinite(proba).any() else None
+    if proba_out is not None:
+        proba_out = np.nan_to_num(proba_out, nan=0.0)
+    return pred, proba_out, global_classes
 
 def event_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> tuple[dict[str, float], pd.DataFrame]:
     labels = [x for x in EVENT_ORDER if x in set(y_true) | set(y_pred)]
@@ -511,6 +535,7 @@ def greedy_wmu_comparison(network_id: str, feature_file: Path | str, n_buses: in
     full_matrix = case_matrix(by_bus, all_buses)
     cache: dict[tuple[int, ...], dict[str, float]] = {}
     rows = []
+    trace_rows = []
     for objective in ["classification", "localization"]:
         selected: list[int] = []
         remaining = all_buses.copy()
@@ -519,17 +544,120 @@ def greedy_wmu_comparison(network_id: str, feature_file: Path | str, n_buses: in
             for bus in remaining:
                 buses = selected + [bus]
                 met = _score_sensor_set_matrix(network_id, full_matrix, buses, cache)
-                primary = met["MacroF1"] if objective == "classification" else met["ExactBusAccuracy"]
-                candidates.append((primary, met.get("FaultF1", 0.0), -bus, bus, met))
-            candidates.sort(reverse=True)
-            _, _, _, best_bus, best_met = candidates[0]
+                if objective == "classification":
+                    sort_key = (met["MacroF1"], met.get("FaultF1", 0.0), met.get("ExactBusAccuracy", -np.inf), met.get("OneHopAccuracy", -np.inf), -met.get("GraphDistanceMAE", np.inf), -bus)
+                    score = met["MacroF1"]
+                else:
+                    sort_key = (met.get("ExactBusAccuracy", -np.inf), met.get("OneHopAccuracy", -np.inf), -met.get("GraphDistanceMAE", np.inf), met["MacroF1"], -bus)
+                    score = met.get("ExactBusAccuracy", np.nan)
+                candidates.append((sort_key, bus, met, score))
+            candidates.sort(key=lambda x: x[0], reverse=True)
+            best_key, best_bus, best_met, best_score = candidates[0]
+            tie_count = sum(1 for key, _, _, _ in candidates if key[:-1] == best_key[:-1])
+            for rank, (key, bus, met, score) in enumerate(candidates, 1):
+                trace_rows.append({
+                    "NetworkID": network_id,
+                    "PlacementObjective": objective,
+                    "IterationK": k,
+                    "CurrentSelectedSet": ";".join(map(str, selected)),
+                    "CandidateBus": int(bus),
+                    "CandidateScore": float(score) if pd.notna(score) else np.nan,
+                    "MacroF1": met.get("MacroF1", np.nan),
+                    "FaultF1": met.get("FaultF1", np.nan),
+                    "ExactBusAccuracy": met.get("ExactBusAccuracy", np.nan),
+                    "OneHopAccuracy": met.get("OneHopAccuracy", np.nan),
+                    "Top3Accuracy": met.get("Top3Accuracy", np.nan),
+                    "GraphDistanceMAE": met.get("GraphDistanceMAE", np.nan),
+                    "CandidateRank": rank,
+                    "TieWithBest": bool(key[:-1] == best_key[:-1]),
+                    "TieBreakRule": "classification: MacroF1 > FaultF1 > Exact > OneHop > lowerDistance > lowerBus; localization: Exact > OneHop > lowerDistance > MacroF1 > lowerBus",
+                    "SelectedThisIteration": bool(bus == best_bus),
+                    "SelectionReason": "best_by_metric_then_tiebreak" if bus == best_bus else "not_selected",
+                })
             selected.append(int(best_bus)); remaining.remove(int(best_bus))
             if k in k_values:
-                rows.append({"NetworkID": network_id, "PlacementObjective": objective, "k": k, "SelectedWMUBuses": ";".join(map(str, selected)), "SelectionOrder": ";".join(map(str, selected)), **best_met})
+                rows.append({"NetworkID": network_id, "PlacementObjective": objective, "k": k, "SelectedWMUBuses": ";".join(map(str, selected)), "SelectionOrder": ";".join(map(str, selected)), "TieCandidatesAtFinalStep": tie_count, **best_met})
     df = pd.DataFrame(rows)
     df.to_csv(results_dir / f"wmu_count_comparison_{network_id}.csv", index=False)
+    trace = pd.DataFrame(trace_rows)
+    trace.to_csv(results_dir / f"{network_id}_localization_greedy_trace.csv", index=False)
     pd.DataFrame([{"NetworkID": network_id, "CacheEntries": len(cache)}]).to_csv(results_dir / f"wmu_selection_cache_summary_{network_id}.csv", index=False)
     return df
+
+def write_model_feature_columns(network_id: str, feature_file: Path | str, n_buses: int, results_dir: Path) -> Path:
+    by_bus = read_table(feature_file)
+    mat = case_matrix(by_bus, list(range(1, n_buses + 1)))
+    feature_cols = [c for c in mat.columns if c.startswith("Bus")]
+    forbidden_tokens = ["EventType", "EventBus", "CaseID", "Status", "OutputCSV", "FileName", "Filename", "FaultType", "FaultPhase", "SwitchType"]
+    findings = []
+    for c in feature_cols:
+        hits = [tok for tok in forbidden_tokens if tok.lower() in c.lower()]
+        if hits:
+            findings.append({"Column": c, "Tokens": hits})
+    payload = {
+        "NetworkID": network_id,
+        "FeatureColumnCount": len(feature_cols),
+        "FeatureColumns": feature_cols,
+        "MetadataColumns": [c for c in mat.columns if not c.startswith("Bus")],
+        "ForbiddenTokenFindings": findings,
+        "LeakageAuditStatus": "PASS" if not findings else "REVIEW",
+    }
+    out = results_dir / f"model_feature_columns_{network_id}.json"
+    out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return out
+
+
+def write_localization_debug_predictions(network_id: str, feature_file: Path | str, n_buses: int, results_dir: Path, model_name: str = "RandomForest") -> pd.DataFrame:
+    by_bus = read_table(feature_file)
+    mat = case_matrix(by_bus, list(range(1, n_buses + 1)))
+    fault = mat[mat["IsFault"]].reset_index(drop=True)
+    model = build_models()[model_name]
+    pred, proba, classes = grouped_cv_predict(fault, "EventBus", model)
+    y_true = fault["EventBus"].to_numpy()
+    dm = graph_distance_matrix(network_id)
+    rows = []
+    classes_list = [] if classes is None else [int(x) if str(x).lstrip('-').isdigit() else str(x) for x in classes]
+    for i, (actual, prd) in enumerate(zip(y_true, pred)):
+        actual_int = int(actual)
+        pred_int = int(prd)
+        top_idx: list[int] = []
+        top_labels: list[object] = []
+        if proba is not None and classes is not None:
+            top_idx = [int(x) for x in np.argsort(proba[i])[::-1][:3]]
+            top_labels = [classes_list[j] for j in top_idx]
+        rows.append({
+            "CaseID": int(fault.loc[i, "CaseID"]),
+            "ActualEventBusRaw": actual,
+            "ActualEventBusEncoded": actual_int,
+            "PredictedClassRaw": prd,
+            "PredictedClassEncoded": pred_int,
+            "PredictedBusUsedForMetric": pred_int,
+            "ExactMatch": bool(actual_int == pred_int),
+            "GraphDistance": dm.get((actual_int, pred_int), 999),
+            "Top3Encoded": ";".join(map(str, top_idx)),
+            "Top3BusLabels": ";".join(map(str, top_labels)),
+            "ModelClasses": ";".join(map(str, classes_list)),
+        })
+    df = pd.DataFrame(rows)
+    df.to_csv(results_dir / f"{network_id}_localization_debug_predictions.csv", index=False)
+    diag = pd.DataFrame([{
+        "NetworkID": network_id,
+        "Model": model_name,
+        "EventBusRawDType": str(mat["EventBus"].dtype),
+        "LocalizationTargetDType": str(fault["EventBus"].dtype),
+        "TrainTargetUniqueClasses": ";".join(map(str, sorted(pd.Series(y_true).unique()))),
+        "TestTargetUniqueClasses": ";".join(map(str, sorted(pd.Series(y_true).unique()))),
+        "ModelClassesGlobalOrder": ";".join(map(str, classes_list)),
+        "PredictUniqueClasses": ";".join(map(str, sorted(pd.Series(pred).astype(int).unique()))),
+        "PredictProbaColumnOrder": ";".join(map(str, classes_list)),
+        "BusIndexBase": "1-based bus labels",
+        "StringIntegerComparison": "no; metrics cast both actual and predicted to int",
+        "LabelEncoderUsed": "no",
+        "LabelEncoderInverseTransformApplied": "not applicable",
+    }])
+    diag.to_csv(results_dir / f"{network_id}_localization_debug_diagnostics.csv", index=False)
+    return df
+
 
 def plot_network_results(network_id: str, results_dir: Path, figures_dir: Path) -> None:
     figdir = figures_dir / network_id

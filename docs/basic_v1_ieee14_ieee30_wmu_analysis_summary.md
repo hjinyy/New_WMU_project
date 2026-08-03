@@ -1,96 +1,49 @@
-# Basic v1 IEEE 14/30 WMU 분석 요약
+# Basic v1 IEEE14/IEEE30 최종 검증 요약
 
 실행일: 2026-08-03
 
-## 입력 데이터
+## 결론
 
-- IEEE14: `/run/media/hy/새 볼륨/WMU_project/IEEE14bus`
-- IEEE30: `/run/media/hy/새 볼륨/WMU_project/IEEE30bus`
+IEEE14는 복원 raw CSV 3개를 포함해 553개 전체 case를 사용하도록 재분석했습니다. IEEE30 fault localization exact accuracy 0.0의 원인은 localization metric/LabelEncoder/dtype 문제가 아니라, 기존 plain `GroupKFold`가 ordered manifest와 결합되어 fold마다 일부 fault bus class를 train set에서 완전히 제외한 split 문제였습니다. `StratifiedGroupKFold(shuffle=True, group=CaseID)`로 수정한 뒤 exact localization이 1.0으로 복구되었습니다.
 
-## 결과 루트
+## 최종 feature validation
 
-`/run/media/hy/새 볼륨/WMU_project/analysis_basic_v1`
+| Network | Manifest rows | Manifest SHA256 | Valid raw CSV | Used cases | Feature rows | WMU buses | Excluded |
+|---|---:|---|---:|---:|---:|---:|---:|
+| IEEE14 | 553 | `11db3fe462b65210e9c868bc40bd601a5e3491b992b8107d5c3280970466f2a9` | 553 | 553 | 7,742 | 14 | 0 |
+| IEEE30 | 1,127 | `b5a46fd5461bc5780cc468b2b8a1729c084b68e93bfc01f9c97e6534629d9eac` | 1,127 | 1,127 | 33,810 | 30 | 0 |
 
-## 주요 산출물
+## IEEE30 localization 수정 전/후
 
-- `features_basic_v1/ieee14_features.csv.gz`, `.pkl`
-- `features_basic_v1/ieee30_features.csv.gz`, `.pkl`
-- `results_basic_v1/full_wmu_baseline_ieee14.csv`
-- `results_basic_v1/full_wmu_baseline_ieee30.csv`
-- `results_basic_v1/wmu_count_comparison_ieee14.csv`
-- `results_basic_v1/wmu_count_comparison_ieee30.csv`
-- `results_basic_v1/sso_background_holdout_ieee14.csv`
-- `results_basic_v1/sso_background_holdout_ieee30.csv`
-- `figures_basic_v1/ieee14/*.png`
-- `figures_basic_v1/ieee30/*.png`
+| Metric | 수정 전 | 수정 후 |
+|---|---:|---:|
+| Exact-bus accuracy | 0.000000 | 1.000000 |
+| One-hop accuracy | 0.791667~0.832143 | 1.000000 |
+| Top-3 accuracy | 0.405952~0.465476, class mapping 미검증 | 1.000000 |
+| Graph-distance MAE | 1.246429~1.400000 | 0.000000 |
 
-## Feature table 크기
+## 최종 baseline
 
-| Network | Used cases | Feature rows | Buses | Feature columns | Excluded cases |
-|---|---:|---:|---:|---:|---:|
-| IEEE14 | 550 | 7,700 | 14 | 40 | 3 |
-| IEEE30 | 1,127 | 33,810 | 30 | 40 | 0 |
+| Network | Model | 7-class Macro-F1 | Fault F1 | Localization exact | One-hop | Top-3 | Graph-distance MAE |
+|---|---|---:|---:|---:|---:|---:|---:|
+| IEEE14 | RandomForest | 0.979584 | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
+| IEEE14 | ExtraTrees | 0.988866 | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
+| IEEE30 | RandomForest | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
+| IEEE30 | ExtraTrees | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
 
-## 테스트
+## Greedy selection
 
-```text
-pytest -q tests/test_basic_v1_pipeline.py
-7 passed
-```
+- IEEE14 classification: `2` → `2;6` → `2;6;9` → `2;6;9;14;4` → `2;6;9;14;4;12;10;5;13;1;8;11;7;3`
+- IEEE14 localization: `2` → `2;6` → `2;6;9` → `2;6;9;11;4` → `2;6;9;11;4;5;3;14;10;12;7;1;13;8`
+- IEEE30 classification/localization: `6` → `6;1;2` → `6;1;2;3;4` → `6;1;2;3;4;5;7;8;9;10` → `6;1;2;3;4;5;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30`
 
-Smoke test:
+Tie-breaking: exact accuracy → one-hop accuracy → graph-distance MAE 낮음 → bus 번호 오름차순.
 
-```text
-IEEE14 PASS: 5 cases × 14 bus = 70 rows
-IEEE30 PASS: 5 cases × 30 bus = 150 rows
-```
+## Leakage audit
 
-## Full-WMU baseline
+- IEEE14: 560 model feature columns, forbidden metadata findings 0, PASS
+- IEEE30: 1,200 model feature columns, forbidden metadata findings 0, PASS
 
-| Network | Model | 7-class Macro-F1 | Fault F1 | False alarm | Fault miss | Loc exact | One-hop | Top-3 | Distance MAE |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| IEEE14 | RandomForest | 0.975880 | 1.000000 | 0.000000 | 0.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
-| IEEE14 | ExtraTrees | 0.987012 | 1.000000 | 0.000000 | 0.000000 | 1.000000 | 1.000000 | 1.000000 | 0.000000 |
-| IEEE30 | RandomForest | 1.000000 | 1.000000 | 0.000000 | 0.000000 | 0.000000 | 0.832143 | 0.465476 | 1.246429 |
-| IEEE30 | ExtraTrees | 1.000000 | 1.000000 | 0.000000 | 0.000000 | 0.000000 | 0.791667 | 0.405952 | 1.400000 |
+## Tests
 
-## Greedy selected buses
-
-IEEE14 classification:
-
-- k=1: 3
-- k=2: 3;2
-- k=3: 3;2;1
-- k=5: 3;2;1;5;4
-- k=14: 3;2;1;5;4;13;12;11;14;9;6;10;8;7
-
-IEEE14 localization:
-
-- k=1: 1
-- k=2: 1;2
-- k=3: 1;2;3
-- k=5: 1;2;3;4;5
-- k=14: 1;2;3;4;5;6;7;8;9;10;11;12;13;14
-
-IEEE30 classification:
-
-- k=1: 9
-- k=3: 9;1;2
-- k=5: 9;1;2;4;3
-- k=10: 9;1;2;4;3;6;5;7;8;10
-- k=30: 9;1;2;4;3;6;5;7;8;10;11;12;13;14;15;16;17;19;18;20;21;22;23;24;25;26;27;29;28;30
-
-IEEE30 localization:
-
-- k=1: 1
-- k=3: 1;2;3
-- k=5: 1;2;3;4;5
-- k=10: 1;2;3;4;5;6;7;8;9;10
-- k=30: 1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30
-
-## 한계
-
-- IEEE14는 manifest 553행 중 실제 CSV 550개만 사용했습니다.
-- 현재 환경에 `pyarrow`가 없어 Parquet 대신 `csv.gz`/`pkl` fallback으로 저장했습니다.
-- IEEE30 exact-bus localization은 basic feature 기준 0으로 나와 추가 점검이 필요합니다.
-- Greedy 후보 탐색은 10-tree ExtraTrees로 수행했습니다. Full-WMU baseline은 120-tree RandomForest/ExtraTrees입니다.
+`pytest -q tests/test_basic_v1_pipeline.py` → `14 passed`
