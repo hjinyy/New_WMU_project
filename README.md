@@ -1022,3 +1022,55 @@ Unit/integration test 최종 결과:
 - IEEE30이 수정 후 모든 주요 metric에서 1.0이므로, 향후 연구 기능 추가 전에는 더 어려운 holdout 조건, noise/parameter perturbation, topology-aware split 등으로 일반화 난이도를 별도 검증하는 것이 좋다.
 - 대용량 raw waveform, feature table, cache는 Git에 포함하지 않고 `/home/hy/문서/WMU_project/analysis_basic_v1/` 아래에 유지한다.
 
+## 20. Fault parameter generalization v1
+
+Basic v1의 후속 실험으로, **fault resistance와 fault inception angle이 학습 시 관측되지 않았을 때** 이벤트 분류와 고장 위치 식별이 얼마나 견고한지를 측정한다.
+
+### 20.1 데이터
+- IEEE14 / IEEE30 각각 540 case (총 1,080). Fault type × Fault bus × Resistance {0.1, 1, 10 Ω} × Angle {0°, 45°, 90°} × Duration {3, 6, 12 cycles} × 3 SSO background.
+- MATLAB serial(worker 1~2) 재개형 러너 (`scripts/run_fault_generalization_ieee30_two_worker_resume.py`) 로 생성.
+- 원시 파형 저장: `/home/hy/문서/WMU_project/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/` (Git 미포함).
+- Quality report: 두 계통 모두 540/540 PASS (초기 IEEE14 2 case NaN → 재실행 후 통과).
+
+### 20.2 코드 위치
+- 파이프라인: `src/wmu_project/fault_generalization_v1/pipeline.py`
+- 실행 스크립트: `scripts/run_fault_generalization_v1.py`, `scripts/run_fault_generalization_ieee30_two_worker_resume.py`
+- MATLAB 러너: `scripts/matlab/run_fault_generalization_v1.m`
+- Tests: `tests/test_fault_generalization_v1.py`
+
+### 20.3 실험 시나리오
+- `unseen_resistance`: 특정 저항값을 학습에서 제외한 뒤 평가.
+- `unseen_angle`: 특정 inception angle을 학습에서 제외한 뒤 평가.
+- `combined_unseen`: 저항 + 각도를 모두 미보정 조합으로 평가.
+- 각 시나리오에서 RandomForest / ExtraTrees 두 모델 비교, case-level split.
+
+### 20.4 핵심 결과 (ExtraTrees)
+
+| Network | Scenario | Macro-F1 | ExactBus | OneHop | GraphMAE |
+|---|---|---|---|---|---|
+| ieee14 | unseen_angle      | 1.000 | 0.975 | 0.984 | 0.05 |
+| ieee14 | unseen_resistance | 0.449 | 0.216 | 0.338 | 1.73 |
+| ieee14 | combined_unseen   | 0.325 | 0.240 | 0.345 | 1.69 |
+| ieee30 | unseen_angle      | 1.000 | 0.995 | 0.995 | 0.02 |
+| ieee30 | unseen_resistance | 0.348 | 0.726 | 0.726 | 0.99 |
+| ieee30 | combined_unseen   | 0.309 | 0.718 | 0.718 | 1.03 |
+
+- Inception angle 일반화는 두 계통 모두 견고 (Macro-F1 = 1.0, ExactBus ≥ 0.97).
+- Fault resistance 일반화는 event classification Macro-F1이 크게 떨어짐 (14: 0.45, 30: 0.35).
+- Localization은 IEEE30에서 One-Hop 0.72로 상대적으로 견고하며 IEEE14에서는 GraphMAE 1.7 수준으로 열화.
+
+### 20.5 Placement 비교 (basic_v1 selection vs new train-only greedy)
+- `results/placement_comparison.csv` / `placement_stability.csv` 참조.
+- 기존 basic_v1 selection과 fault-parameter 미보정 조건에서 재학습한 새 selection의 macro-F1을 k = 1, 3, 5, 10, (IEEE14 14 / IEEE30 30) 별로 비교.
+- IEEE30 combined_unseen 기준으로 train-only greedy가 소규모 k에서 유의미하게 우세 (예: k=1에서 F1 0.19 → 0.58).
+
+### 20.6 산출물 경로
+- Features: `analysis_fault_generalization_v1/features/{ieee14,ieee30}_fault_generalization_features.csv.gz(.pkl)`
+- Results: `analysis_fault_generalization_v1/results/*.csv`, `fault_parameter_generalization_summary.md`
+- Figures: `analysis_fault_generalization_v1/figures/*.png`
+- Logs: `analysis_fault_generalization_v1/logs/`
+
+### 20.7 알려진 한계
+- Fault resistance 일반화 열화는 hand-crafted RMS/phasor feature에 saturation이 심하기 때문이며, 향후 정규화/spectral feature 확장이 필요.
+- IEEE14 combined_unseen에서 macro-F1 0.32는 leave-out combination 수가 매우 적기 때문에 통계적 신뢰구간 확보가 필요.
+

@@ -41,3 +41,17 @@ release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization
 *.toc
 *.xdv
 build_ko/
+
+# Fault generalization v1 (large binaries/models/backups excluded)
+slprj/
+models/
+backups/
+presentation_output/
+data/WMU_final_combined_318_all_files/
+results/additional_192_preflight/
+results/expanded_318_evaluation_revision_*/
+results/expanded_318_full_analysis_*/
+results/expanded_318_full_analysis_results.zip
+results/expanded_318_validation_audit_*/
+*.docx
+
