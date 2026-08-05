@@ -63,11 +63,11 @@ def render(paths: PFPaths) -> dict:
         ax.set_title(f"({'a' if i == 0 else 'b'}) {net.upper()} representative 5-bus experiment", loc="left")
         ax.grid(True, axis="y", alpha=0.25)
         ax.legend(fontsize=7)
-        # MAE as secondary axis dots
+        # MAE as line + marker on secondary axis
         ax2 = ax.twinx()
         ax2.plot(range(len(SCENARIOS)),
-                 mae, marker="D", color="#8c564b", linestyle="none",
-                 markersize=6, label="Graph-distance MAE")
+                 mae, marker="D", color="#8c564b", linestyle="-",
+                 linewidth=1.2, markersize=6, label="Graph-distance MAE")
         ax2.set_ylabel("Graph-distance MAE", color="#8c564b")
         ax2.tick_params(axis="y", labelcolor="#8c564b")
         ax2.set_ylim(bottom=0)
@@ -78,9 +78,9 @@ def render(paths: PFPaths) -> dict:
     savefig_both(fig, png, pdf)
     pd.DataFrame(rows_out).to_csv(paths.figure_data / "fig06_fault_parameter_generalization.csv", index=False)
     (paths.captions / "fig06_fault_parameter_generalization.md").write_text(
-        "**Figure 6.** Fault-parameter generalization on the representative five-location robustness experiment (IEEE14: buses 2, 6, 9, 11, 14; IEEE30: buses 1, 6, 10, 24, 30).\n"
-        "Bars show Fault-type Macro-F1, exact-bus and one-hop localisation accuracy under (i) unseen fault inception angle, (ii) unseen fault resistance and (iii) combined unseen conditions with the ExtraTrees model and the all-WMU sensor set.\n"
-        "Diamonds on the secondary axis show the graph-distance MAE in the same conditions.\n"
-        "These results are limited to the five representative fault buses per network and are not full-network localisation results.\n"
+        "**Figure 6.** Representative five-bus robustness experiment. Fault-parameter generalization on the representative five fault locations per network (IEEE14: buses 2, 6, 9, 11, 14; IEEE30: buses 1, 6, 10, 24, 30).\n"
+        "Grouped bars show Fault-type Macro-F1, exact-bus and one-hop localisation accuracy under (i) unseen fault inception angle, (ii) unseen fault resistance and (iii) combined unseen conditions with the ExtraTrees model and the all-WMU sensor set.\n"
+        "The connected line with diamond markers on the secondary axis shows the graph-distance MAE for the same conditions.\n"
+        "Representative five-bus robustness experiment: these results are limited to the five representative fault buses per network and must not be interpreted as full-network localisation performance.\n"
     )
     return {"png": png, "pdf": pdf}

@@ -1120,3 +1120,16 @@ python3 scripts/run_paper_figures_v1.py
 ```
 `diagnostics/final_figure_validation.csv`로 PNG/PDF/caption/data 존재 및 PASS/PARTIAL 상태를 확인할 수 있다.
 
+### 21.7 Revision r2 (publication polish)
+
+`paper_figures_v1` 파이프라인은 다음 시각화 개선을 적용하고 재실행되었다. 수치·모델·시뮬레이션은 어떠한 것도 변경하지 않았다.
+
+- 스타일: matplotlib rc를 IEEE Transactions 스타일에 맞춰 Times 계열 serif, 8-9 pt 축/제목 폰트, 얇은 축 선 (0.6 pt)으로 통일. PNG는 600 dpi, PDF는 vector로 저장.
+- Fig 1: 프레임워크 다이어그램에 "Fault-type classification" 블록을 추가. topology 부분은 그대로 유지.
+- Fig 3: Event Macro-F1 / Localisation Exact / One-hop 세 곡선만 남기고 Top-3 제거. y축을 0.95–1.00으로 확대해 포화 근처 미세한 차이를 표시. 범례를 두 열로 압축.
+- Fig 6: 그룹 막대는 유지하고, Graph-distance MAE를 secondary axis에서 dotted marker에서 line + marker로 변경. Caption 첫 문장에 "Representative five-bus robustness experiment." 명시.
+- Fig 7: per-sample prediction이 저장되지 않았으므로 별도 예측을 생성하지 않고 aggregated metric만 유지. Caption에 per-sample predictions unavailable을 명시.
+- Fig 8: (a)(b) 파형을 0.10–0.18 s로 zoom. (c) 하나의 축에 두 계통 곡선을 겹치던 것을 (c) IEEE14, (d) IEEE30으로 분리하고 No-SSO 곡선은 clarity를 위해 제거. spatial 패널은 단일 (e)로 두고 색상 = SSO 주파수, marker = network로 legend를 분리해 clutter를 줄임.
+
+Revision 후에도 fault_generalization_v1의 per-sample prediction 부재는 근본적 자산 한계라 fig07은 여전히 PARTIAL 상태이며, `analysis_paper_figures_v1/diagnostics/final_figure_validation.csv`에 그대로 반영된다.
+

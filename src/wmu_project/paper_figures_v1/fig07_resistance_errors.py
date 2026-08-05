@@ -85,10 +85,10 @@ def render(paths: PFPaths) -> dict:
         "not_generated,Per-fault-bus prediction / accuracy is not stored by fault_generalization_v1 pipeline; only aggregate metrics across the 5 representative buses are available.\n"
     )
     (paths.captions / "fig07_unseen_resistance_error_analysis.md").write_text(
-        "**Figure 7 (PARTIAL).** Unseen fault-resistance error analysis.\n"
-        "(a,b) Per-fault-type F1 on the unseen-resistance scenario with the all-WMU sensor set (ExtraTrees model). "
-        "Per-sample predictions are not persisted by the fault_generalization_v1 pipeline, so the classical row-normalised confusion matrix requested for panels (a,b) cannot be reconstructed from the stored artefacts without re-training the model, which is out of scope for this figure task; per-class F1 is shown instead as an approved aggregate.\n"
-        "(c,d) Exact-bus localisation accuracy under unseen resistance as a function of sensor count k, split by placement scheme (existing basic_v1 classification/localisation greedy vs new train-only greedy vs full-WMU baseline).\n"
+        "**Figure 7 (PARTIAL — aggregated metrics only).** Unseen fault-resistance error analysis.\n"
+        "The fault_generalization_v1 pipeline persists only aggregate metrics per (network, scenario, model, placement, k); per-sample predictions are unavailable, so the row-normalised fault-type confusion matrix and the per-fault-bus localisation-accuracy bars requested in the original brief cannot be reconstructed without re-training the model, which is out of scope for this figure task. No per-sample predictions were fabricated.\n"
+        "(a,b) Per-fault-type F1 on the unseen-resistance scenario with the all-WMU sensor set (ExtraTrees model) — aggregated metric shown in place of the confusion matrix.\n"
+        "(c,d) Exact-bus localisation accuracy under unseen resistance as a function of sensor count k, split by placement scheme (existing basic_v1 classification / localisation greedy, new train-only greedy, and full-WMU baseline).\n"
         "See diagnostics/missing_assets.csv and paper_figures_summary.md for the missing per-sample prediction artefacts.\n"
     )
     return {"png": png, "pdf": pdf, "partial": True}

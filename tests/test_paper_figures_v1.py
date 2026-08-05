@@ -77,8 +77,9 @@ def test_graph_topology_matches_pipeline():
 
 
 def test_sso_window_before_event_onset():
-    from wmu_project.paper_figures_v1.fig08_sso_analysis import WIN
+    from wmu_project.paper_figures_v1.fig08_sso_analysis import WIN, ZOOM
     assert 0 < WIN[0] < WIN[1] < 0.30
+    assert WIN[0] <= ZOOM[0] < ZOOM[1] <= WIN[1]
 
 
 def test_bus_label_type_normalization():

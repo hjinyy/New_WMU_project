@@ -29,6 +29,7 @@ def _draw_framework(ax) -> None:
         "Synchronised WMU\nVabc / Iabc measurement",
         "Multi-domain waveform\nfeature extraction",
         "Event classification\n(7-class)",
+        "Fault-type classification\n(SLG / LL / LLG / 3-phase)",
         "Fault localisation\n(bus / one-hop / graph)",
         "Objective-oriented\nreduced WMU placement",
         "Fault-parameter\nrobustness evaluation",
