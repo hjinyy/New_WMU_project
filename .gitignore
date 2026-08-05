@@ -55,3 +55,6 @@ results/expanded_318_full_analysis_results.zip
 results/expanded_318_validation_audit_*/
 *.docx
 
+# Paper figures v1 output (regenerable)
+analysis_paper_figures_v1/
+

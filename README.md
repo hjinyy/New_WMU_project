@@ -1074,3 +1074,49 @@ Basic v1의 후속 실험으로, **fault resistance와 fault inception angle이 
 - Fault resistance 일반화 열화는 hand-crafted RMS/phasor feature에 saturation이 심하기 때문이며, 향후 정규화/spectral feature 확장이 필요.
 - IEEE14 combined_unseen에서 macro-F1 0.32는 leave-out combination 수가 매우 적기 때문에 통계적 신뢰구간 확보가 필요.
 
+## 21. Paper figures v1
+
+기존 basic_v1 결과 + fault_generalization_v1 결과 + 기존 raw waveform만을 이용해 논문 본문용 Figure 8개를 재생성하는 파이프라인이다. 새로운 simulation, 새로운 학습, 새로운 배치 최적화는 수행하지 않는다.
+
+### 21.1 코드 위치
+- 파이프라인: `src/wmu_project/paper_figures_v1/`
+- CLI: `scripts/run_paper_figures_v1.py`
+- Tests: `tests/test_paper_figures_v1.py`
+
+### 21.2 실행
+```
+python3 scripts/run_paper_figures_v1.py \
+  --repo-root /home/hy/WMU_project \
+  --data-root /home/hy/문서/WMU_project \
+  --output-root /home/hy/문서/WMU_project/analysis_paper_figures_v1
+```
+Output root 아래에 `figures_png/`, `figures_pdf/`, `figure_data/`, `captions/`, `diagnostics/`, `paper_figures_summary.md`가 생성된다.
+
+### 21.3 입력 데이터 자동 탐색
+`src/wmu_project/paper_figures_v1/paths.py`가 다음 위치를 참조한다.
+- basic_v1 manifest: `IEEE14bus/manifests/`, `IEEE30bus/manifests/`
+- basic_v1 raw waveform: `raw_csv/`, `IEEE30bus/raw_csv/`
+- basic_v1 metric/prediction/greedy 결과: `analysis_basic_v1/results_basic_v1/`
+- fault_generalization_v1 결과: `analysis_basic_v1/analysis_fault_generalization_v1/results/`
+자산 존재 여부는 `diagnostics/input_asset_inventory.csv`와 `diagnostics/missing_assets.csv`에 기록된다.
+
+### 21.4 Figure 1–8
+- Fig 1: 전체 프레임워크 + IEEE14/IEEE30 topology, SSO/PCC, 대표 5개 fault bus, k=5 목적별 배치.
+- Fig 2: Full-WMU 조건의 event 분류 및 fault localization 혼동행렬 (ExtraTrees).
+- Fig 3: WMU 수에 따른 Macro-F1/Exact/OneHop/Top-3 변화. classification/localization 배치 별 solid/dashed.
+- Fig 4: k=5 objective-oriented 배치 topology 비교 + Jaccard similarity.
+- Fig 5: Reduced vs full-WMU 성능 유지율.
+- Fig 6: 대표 5-bus 실험의 unseen angle / resistance / combined 일반화.
+- Fig 7 (PARTIAL): fault_generalization_v1이 per-sample prediction을 저장하지 않아 요청된 fault-type confusion + fault-bus별 정확도 대신, per-fault-type F1과 k별 exact 정확도를 대체 지표로 표시. 누락 자산은 `diagnostics/missing_assets.csv`에 기록.
+- Fig 8: Normal case raw waveform에서 envelope FFT로 계산한 SSO band peak와 hop distance에 따른 공간 분포.
+
+### 21.5 새로운 시뮬레이션을 수행하지 않았음
+Figure 생성 파이프라인은 어떤 raw waveform도 새로 생성하지 않는다. Simulink 호출, 새 학습, 새 greedy 최적화, exhaustive subset 탐색, joint placement 신규 구현이 없음을 코드로 강제한다.
+
+### 21.6 재현
+```
+pytest -q tests/test_paper_figures_v1.py
+python3 scripts/run_paper_figures_v1.py
+```
+`diagnostics/final_figure_validation.csv`로 PNG/PDF/caption/data 존재 및 PASS/PARTIAL 상태를 확인할 수 있다.
+
