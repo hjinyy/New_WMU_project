@@ -1133,3 +1133,31 @@ python3 scripts/run_paper_figures_v1.py
 
 Revision 후에도 fault_generalization_v1의 per-sample prediction 부재는 근본적 자산 한계라 fig07은 여전히 PARTIAL 상태이며, `analysis_paper_figures_v1/diagnostics/final_figure_validation.csv`에 그대로 반영된다.
 
+
+
+## 22. Paper figures v2 — reference-inspired restructuring
+
+기존 Figure r2의 단순 스타일 보정이 아니라, 참고 PMU placement 논문의 구성 원칙(하나의 Figure=하나의 연구 질문, k별 포화점, 제한 센서 조합 비교, 선택 안정성, confusion/error decomposition)을 반영해 WMU 논문 Figure를 10개로 재구성했다.
+
+- 코드: `scripts/run_paper_figures_v2.py`
+- 출력: `/home/hy/문서/WMU_project/analysis_paper_figures_v2`
+- 새 simulation/raw 생성 없음, 기존 manifest/basic_v1/fault_generalization_v1 결과 덮어쓰기 없음.
+- PMU-like feature: sequence/phasor/frequency-proxy 계열 (`V1`, `V2_over_V1`, `V0_over_V1`, `I1`, `I2_over_I1`, `I0_over_I1`, low-frequency proxy 등).
+- WMU waveform feature: voltage sag, current rise, RMS change, sequence ratios, SSO/spectral energy 등 기존 basic_v1 feature table에 저장된 waveform-derived feature.
+- Figure 1–10: workflow, system topology, feature concept, k별 성능, IEEE14 1/2/3-WMU 조합, task-specific selection frequency, confusion/error structure, fault-parameter robustness, SSO spatial/spectral 특성, PMU-like vs WMU comparison.
+- 제한: fault_generalization_v1 per-sample prediction이 저장되지 않아 unseen-resistance confusion/per-bus 오류분해는 생성하지 않았고, Fig 7 및 diagnostics에 PARTIAL로 명시했다.
+
+실행:
+```bash
+python3 scripts/run_paper_figures_v2.py \
+  --repo-root /home/hy/WMU_project \
+  --data-root /home/hy/문서/WMU_project \
+  --reference-paper "/mnt/data/International Journal of Energy Research - 2024 - Faza - Optimal PMU Placement for Fault Classification and Localization.pdf" \
+  --output-root /home/hy/문서/WMU_project/analysis_paper_figures_v2
+```
+
+검증:
+```bash
+pytest -q tests/test_paper_figures_v2.py
+```
+
