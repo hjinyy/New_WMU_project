@@ -1161,3 +1161,13 @@ python3 scripts/run_paper_figures_v2.py \
 pytest -q tests/test_paper_figures_v2.py
 ```
 
+
+## 24. Final paper figures — validated WMU results only
+
+최종 논문용 Figure 1–8은 기존 `analysis_basic_v1` 및 `fault_generalization_v1` 결과만 사용한다. 이전 v2의 PMU-like/feature-comparison 분석은 제외했다.
+
+- 실행: `python3 scripts/run_paper_figures_final.py --repo-root /home/hy/WMU_project --data-root /home/hy/문서/WMU_project --output-root /home/hy/문서/WMU_project/analysis_paper_figures_final`
+- 출력: `/home/hy/문서/WMU_project/analysis_paper_figures_final`
+- 새 Simulink simulation, raw waveform 생성, PMU-like baseline, feature ablation, 신규 model 비교 없음
+- 검증: `pytest -q tests/test_paper_figures_final.py`
+
