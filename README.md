@@ -1171,3 +1171,18 @@ pytest -q tests/test_paper_figures_v2.py
 - 새 Simulink simulation, raw waveform 생성, PMU-like baseline, feature ablation, 신규 model 비교 없음
 - 검증: `pytest -q tests/test_paper_figures_final.py`
 
+
+
+## 25. Interpretability figures v1
+
+설명형 논문 Figure A–D는 기존 raw waveform, `analysis_basic_v1` feature table, 기존 result CSV만 사용해 생성한다. 새 Simulink simulation, 새 raw waveform 생성, PMU-like baseline, 신규 ML model 비교는 수행하지 않는다.
+
+- 실행: `python3 scripts/run_interpretability_figures_v1.py --repo-root /home/hy/WMU_project --data-root /home/hy/문서/WMU_project --output-root /home/hy/문서/WMU_project/analysis_interpretability_figures_v1`
+- 출력: `/home/hy/문서/WMU_project/analysis_interpretability_figures_v1`
+- Figure A: representative event waveform signatures
+- Figure B: waveform-to-feature construction concept
+- Figure C: key feature distributions across event classes
+- Figure D: PCA feature-space visualization and leakage-aware learning pipeline
+- Diagnostics: `diagnostics/input_inventory.csv`, `used_raw_cases.csv`, `used_feature_columns.csv`, `final_validation.csv`
+
+한계: Figure는 기존 데이터의 후처리 시각화이며, 없는 prediction이나 feature를 임의 생성하지 않는다. Figure D의 PCA는 설명용 projection이며 신규 학습 성능 평가가 아니다.
