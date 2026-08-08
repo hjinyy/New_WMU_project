@@ -1186,3 +1186,14 @@ pytest -q tests/test_paper_figures_v2.py
 - Diagnostics: `diagnostics/input_inventory.csv`, `used_raw_cases.csv`, `used_feature_columns.csv`, `final_validation.csv`
 
 한계: Figure는 기존 데이터의 후처리 시각화이며, 없는 prediction이나 feature를 임의 생성하지 않는다. Figure D의 PCA는 설명용 projection이며 신규 학습 성능 평가가 아니다.
+
+
+## 26. Interpretability figures final audit
+
+`analysis_interpretability_figures_final` refines the earlier interpretability figures after auditing raw waveform channel consistency and feature-definition validity. It uses only existing raw CSV, `analysis_basic_v1` feature tables, and stored result CSVs; no new Simulink simulation, raw waveform generation, or ML-result overwrite is performed.
+
+- 실행: `python3 scripts/run_interpretability_figures_final.py --repo-root /home/hy/WMU_project --data-root /home/hy/문서/WMU_project --output-root /home/hy/문서/WMU_project/analysis_interpretability_figures_final`
+- 출력: `/home/hy/문서/WMU_project/analysis_interpretability_figures_final`
+- 핵심 진단: `diagnostics/ieee14_waveform_channel_audit.csv`, `diagnostics/ieee30_waveform_channel_audit.csv`, `diagnostics/dominant_lowfreq_validation.csv`, `diagnostics/feature_definition_audit.csv`, `diagnostics/pca_input_audit.csv`, `diagnostics/ml_training_procedure.md`
+- 최종 Figure: I1 waveform signatures, I2 verified feature extraction, I3 event-wise verified feature distributions, I4 PCA and corrected learning pipeline.
+- 주의: `dominant_lowfreq_component`는 injected SSO frequency detector로 검증되지 않아 최종 분포 Figure에서 제외한다.
