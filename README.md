@@ -1197,3 +1197,18 @@ pytest -q tests/test_paper_figures_v2.py
 - 핵심 진단: `diagnostics/ieee14_waveform_channel_audit.csv`, `diagnostics/ieee30_waveform_channel_audit.csv`, `diagnostics/dominant_lowfreq_validation.csv`, `diagnostics/feature_definition_audit.csv`, `diagnostics/pca_input_audit.csv`, `diagnostics/ml_training_procedure.md`
 - 최종 Figure: I1 waveform signatures, I2 verified feature extraction, I3 event-wise verified feature distributions, I4 PCA and corrected learning pipeline.
 - 주의: `dominant_lowfreq_component`는 injected SSO frequency detector로 검증되지 않아 최종 분포 Figure에서 제외한다.
+
+
+## Final paper figures
+
+The final main-paper figure set is fixed at `paper/final_figures` and contains exactly nine publication-ready figures selected from existing validated WMU outputs. No new Simulink simulation, feature extraction, ML training, placement search, robustness evaluation, or metric recomputation was performed for this packaging step. See `paper/final_figures/figure_index.md` for source mapping, paper-section placement, and PNG/PDF links.
+
+- Figure 1: Overall methodology
+- Figure 2: IEEE14 and IEEE30 test systems
+- Figure 3: Representative event waveform signatures
+- Figure 4: Physically interpretable feature extraction and distributions
+- Figure 5: Full-WMU baseline performance
+- Figure 6: Performance versus number of WMUs
+- Figure 7: Objective-oriented reduced WMU placement
+- Figure 8: Fault-parameter robustness
+- Figure 9: SSO spectral and spatial characteristics

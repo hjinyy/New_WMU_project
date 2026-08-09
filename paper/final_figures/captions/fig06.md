@@ -1,0 +1,1 @@
+Figure 6. Performance versus number of WMUs. Seen-condition and unseen-resistance performance are compared as a function of the number of WMUs for IEEE14 and IEEE30 using event Macro-F1 and exact-bus localization accuracy. Curves are copied from the validated final result figure without recomputation.

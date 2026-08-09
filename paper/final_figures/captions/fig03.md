@@ -1,0 +1,1 @@
+Figure 3. Representative WMU waveform signatures. Audited voltage and current envelopes are shown for Normal, LoadSwitch, CapSwitch, SLG, LL, LLG, and ThreePhase events using IEEE14 WMU Bus 14 and IEEE30 WMU Bus 10 under the selected SSO background. Separate voltage/current panels and common within-network y-scales avoid event-wise secondary-axis autoscaling artifacts.

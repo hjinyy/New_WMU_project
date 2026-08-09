@@ -1,0 +1,1 @@
+Figure 2. IEEE14 and IEEE30 test systems. The panels show network topology, generator buses, candidate WMU buses, representative robustness fault buses, and the SSO/PCC locations. The PCC is Bus 7 for IEEE14 and Bus 30 for IEEE30.

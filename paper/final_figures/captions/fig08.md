@@ -1,0 +1,1 @@
+Figure 8. Fault-parameter robustness. Representative five-location robustness results compare unseen angle, unseen resistance, and combined unseen conditions for IEEE14 and IEEE30. Metrics include fault-type Macro-F1, exact-bus accuracy, one-hop accuracy, and graph-distance MAE.

@@ -1,0 +1,1 @@
+Figure 5. Full-WMU seen-condition baseline performance. IEEE14 and IEEE30 full-WMU models provide the reference event-classification and fault-localization performance under seen conditions. IEEE30 localization is summarized by metrics where the full 30×30 matrix is visually redundant.
