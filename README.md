@@ -1212,3 +1212,8 @@ The final main-paper figure set is fixed at `paper/final_figures` and contains e
 - Figure 7: Objective-oriented reduced WMU placement
 - Figure 8: Fault-parameter robustness
 - Figure 9: SSO spectral and spatial characteristics
+
+
+## IEEE14 Bus14 PCC fault-parameter rerun
+
+IEEE14 unseen fault-inception-angle and fault-resistance simulations were rerun under the Bus14-PCC working-model state and postprocessed in a separate output root: `/home/hy/문서/WMU_project/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1`. The run produced 540/540 SUCCESS cases, 540/540 quality-pass CSVs, and 7,560 feature rows. ExtraTrees headline means over placements were: unseen angle Macro-F1 1.0000 / exact-bus 0.9748, unseen resistance Macro-F1 0.4486 / exact-bus 0.2158, and combined unseen Macro-F1 0.3254 / exact-bus 0.2397. Previous generalization outputs were archived locally at `/home/hy/문서/WMU_project/archives/fault_generalization_previous_bus7_20260812.tar.gz`; see `reports/ieee14_bus14_pcc_fault_generalization_rerun.md` for provenance and SHA checks.
