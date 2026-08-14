@@ -1,3 +1,9 @@
+# New_WMU_project
+
+최근 WMU source-consistent reviewer figure/audit 코드와 summary를 포함한 연구 저장소입니다.
+
+---
+
 # WMU 기반 SSO 환경 이벤트 분류 및 고장 위치추정 연구
 
 이 저장소는 **SSO(Sub-Synchronous Oscillation) 배경조건이 존재하는 IEEE benchmark power system에서 제한된 WMU(Waveform Measurement Unit) 배치만으로 고장·비고장 이벤트를 안정적으로 구분하고, 고장 발생 시 계통 전역의 위치 식별 성능을 확보하는 연구**를 위한 코드·데이터 설명·분석 결과·논문 초안 workspace를 담고 있습니다.
