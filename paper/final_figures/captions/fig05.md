@@ -1,1 +1,1 @@
-Figure 5. Full-WMU seen-condition baseline performance. IEEE14 and IEEE30 full-WMU models provide the reference event-classification and fault-localization performance under seen conditions. IEEE30 localization is summarized by metrics where the full 30×30 matrix is visually redundant.
+Figure 5. Performance degradation under unseen fault resistance. Full-WMU exact-bus localization remains near 100% for known resistance values but drops under held-out resistance, especially for the IEEE14 Bus14-PCC dataset, motivating robustness-aware training or domain adaptation.

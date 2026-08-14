@@ -1,1 +1,0 @@
-Figure 9. SSO spectral and spatial characteristics. The figure shows PCC waveform/envelope behavior, target-frequency magnitude for 15/25/35 Hz backgrounds, and graph-topology spatial distributions of normalized SSO magnitude for IEEE14 and IEEE30. Distance is interpreted topologically rather than as impedance-based electrical distance.

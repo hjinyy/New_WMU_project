@@ -1,1 +1,1 @@
-Figure 6. Performance versus number of WMUs. Seen-condition and unseen-resistance performance are compared as a function of the number of WMUs for IEEE14 and IEEE30 using event Macro-F1 and exact-bus localization accuracy. Curves are copied from the validated final result figure without recomputation.
+Figure 6. Representative WMU event waveform signatures for IEEE14 and IEEE30. For each event class, cycle-RMS-smoothed voltage and current envelopes around the 0.3-s event onset are shown at representative WMU buses, with the event interval shaded.
