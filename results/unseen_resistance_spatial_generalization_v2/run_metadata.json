@@ -1,0 +1,20 @@
+{
+  "dataset_source": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1",
+  "feature_files": {
+    "ieee14": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee14_fault_generalization_features.csv.gz",
+    "ieee30": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee30_fault_generalization_features.csv.gz"
+  },
+  "train_resistances": [
+    0.1,
+    1.0
+  ],
+  "test_resistance": 10.0,
+  "epsilon": 1e-12,
+  "spatial_normalization": "per CaseID over selected WMUs only; no test population statistics",
+  "models": [
+    "ExtraTreesClassifier",
+    "RandomForestClassifier"
+  ],
+  "paper_final_figures_modified": false,
+  "scope": "representative five-fault-bus resistance-generalization dataset, not full all-bus main dataset"
+}
