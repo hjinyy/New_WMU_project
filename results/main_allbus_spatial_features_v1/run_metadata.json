@@ -1,0 +1,15 @@
+{
+  "source": {
+    "ieee14": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/features_basic_v1/ieee14_features.csv.gz",
+    "ieee30": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/features_basic_v1/ieee30_features.csv.gz"
+  },
+  "source_case_counts": {
+    "ieee14": 553,
+    "ieee30": 1127
+  },
+  "epsilon": 1e-12,
+  "split_policy": "StratifiedGroupKFold by CaseID from existing basic_v1 pipeline",
+  "models": "Existing ExtraTreesClassifier/RandomForestClassifier hyperparameters from basic_v1",
+  "paper_final_figures_modified": false,
+  "representative_resistance_dataset_used": false
+}

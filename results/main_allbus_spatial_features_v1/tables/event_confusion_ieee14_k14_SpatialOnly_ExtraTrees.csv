@@ -1,0 +1,8 @@
+,Normal,LoadSwitch,CapSwitch,SLG,LL,LLG,ThreePhase
+Normal,6,0,0,1,0,0,0
+LoadSwitch,0,10,67,0,0,0,0
+CapSwitch,0,74,3,0,0,0,0
+SLG,0,0,0,91,3,2,2
+LL,0,0,0,7,84,6,1
+LLG,0,0,0,0,13,70,15
+ThreePhase,0,0,0,0,0,16,82
