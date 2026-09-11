@@ -1,0 +1,141 @@
+NetworkID,Variant,Model,FaultBus,TestCases,ExactBusAccuracy
+ieee14,Baseline,ExtraTrees,2,36,1.0
+ieee14,Baseline,ExtraTrees,6,36,0.0
+ieee14,Baseline,ExtraTrees,9,36,0.0
+ieee14,Baseline,ExtraTrees,11,36,0.0
+ieee14,Baseline,ExtraTrees,14,36,0.0
+ieee14,Baseline,RandomForest,2,36,1.0
+ieee14,Baseline,RandomForest,6,36,0.0
+ieee14,Baseline,RandomForest,9,36,0.0
+ieee14,Baseline,RandomForest,11,36,0.0
+ieee14,Baseline,RandomForest,14,36,0.0
+ieee14,Experiment A: voltage only,ExtraTrees,2,36,1.0
+ieee14,Experiment A: voltage only,ExtraTrees,6,36,0.0
+ieee14,Experiment A: voltage only,ExtraTrees,9,36,0.0
+ieee14,Experiment A: voltage only,ExtraTrees,11,36,0.0
+ieee14,Experiment A: voltage only,ExtraTrees,14,36,0.0
+ieee14,Experiment A: voltage only,RandomForest,2,36,1.0
+ieee14,Experiment A: voltage only,RandomForest,6,36,0.0
+ieee14,Experiment A: voltage only,RandomForest,9,36,0.0
+ieee14,Experiment A: voltage only,RandomForest,11,36,0.0
+ieee14,Experiment A: voltage only,RandomForest,14,36,0.0
+ieee14,Experiment B: current only,ExtraTrees,2,36,1.0
+ieee14,Experiment B: current only,ExtraTrees,6,36,0.0
+ieee14,Experiment B: current only,ExtraTrees,9,36,0.0
+ieee14,Experiment B: current only,ExtraTrees,11,36,0.0
+ieee14,Experiment B: current only,ExtraTrees,14,36,0.0
+ieee14,Experiment B: current only,RandomForest,2,36,1.0
+ieee14,Experiment B: current only,RandomForest,6,36,0.0
+ieee14,Experiment B: current only,RandomForest,9,36,0.0
+ieee14,Experiment B: current only,RandomForest,11,36,0.0
+ieee14,Experiment B: current only,RandomForest,14,36,0.0
+ieee14,Experiment C: existing V+C,ExtraTrees,2,36,1.0
+ieee14,Experiment C: existing V+C,ExtraTrees,6,36,0.0
+ieee14,Experiment C: existing V+C,ExtraTrees,9,36,0.0
+ieee14,Experiment C: existing V+C,ExtraTrees,11,36,0.0
+ieee14,Experiment C: existing V+C,ExtraTrees,14,36,0.0
+ieee14,Experiment C: existing V+C,RandomForest,2,36,1.0
+ieee14,Experiment C: existing V+C,RandomForest,6,36,0.0
+ieee14,Experiment C: existing V+C,RandomForest,9,36,0.0
+ieee14,Experiment C: existing V+C,RandomForest,11,36,0.0
+ieee14,Experiment C: existing V+C,RandomForest,14,36,0.0
+ieee14,Experiment D: existing + normalized V/I,ExtraTrees,2,36,0.9722222222222222
+ieee14,Experiment D: existing + normalized V/I,ExtraTrees,6,36,0.9444444444444444
+ieee14,Experiment D: existing + normalized V/I,ExtraTrees,9,36,0.8055555555555556
+ieee14,Experiment D: existing + normalized V/I,ExtraTrees,11,36,1.0
+ieee14,Experiment D: existing + normalized V/I,ExtraTrees,14,36,1.0
+ieee14,Experiment D: existing + normalized V/I,RandomForest,2,36,1.0
+ieee14,Experiment D: existing + normalized V/I,RandomForest,6,36,0.9166666666666666
+ieee14,Experiment D: existing + normalized V/I,RandomForest,9,36,1.0
+ieee14,Experiment D: existing + normalized V/I,RandomForest,11,36,1.0
+ieee14,Experiment D: existing + normalized V/I,RandomForest,14,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,ExtraTrees,2,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,ExtraTrees,6,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,ExtraTrees,9,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,ExtraTrees,11,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,ExtraTrees,14,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,RandomForest,2,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,RandomForest,6,36,0.9722222222222222
+ieee14,Experiment E: existing + normalized V/I + rank,RandomForest,9,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,RandomForest,11,36,1.0
+ieee14,Experiment E: existing + normalized V/I + rank,RandomForest,14,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,2,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,6,36,0.9722222222222222
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,9,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,11,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,14,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,2,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,6,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,9,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,11,36,1.0
+ieee14,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,14,36,1.0
+ieee30,Baseline,ExtraTrees,1,36,1.0
+ieee30,Baseline,ExtraTrees,6,36,0.75
+ieee30,Baseline,ExtraTrees,10,36,0.75
+ieee30,Baseline,ExtraTrees,24,36,0.6944444444444444
+ieee30,Baseline,ExtraTrees,30,36,0.0
+ieee30,Baseline,RandomForest,1,36,1.0
+ieee30,Baseline,RandomForest,6,36,0.0
+ieee30,Baseline,RandomForest,10,36,0.0
+ieee30,Baseline,RandomForest,24,36,0.0
+ieee30,Baseline,RandomForest,30,36,0.0
+ieee30,Experiment A: voltage only,ExtraTrees,1,36,1.0
+ieee30,Experiment A: voltage only,ExtraTrees,6,36,0.75
+ieee30,Experiment A: voltage only,ExtraTrees,10,36,0.75
+ieee30,Experiment A: voltage only,ExtraTrees,24,36,0.75
+ieee30,Experiment A: voltage only,ExtraTrees,30,36,0.027777777777777776
+ieee30,Experiment A: voltage only,RandomForest,1,36,1.0
+ieee30,Experiment A: voltage only,RandomForest,6,36,0.75
+ieee30,Experiment A: voltage only,RandomForest,10,36,0.75
+ieee30,Experiment A: voltage only,RandomForest,24,36,0.75
+ieee30,Experiment A: voltage only,RandomForest,30,36,0.0
+ieee30,Experiment B: current only,ExtraTrees,1,36,1.0
+ieee30,Experiment B: current only,ExtraTrees,6,36,0.0
+ieee30,Experiment B: current only,ExtraTrees,10,36,0.0
+ieee30,Experiment B: current only,ExtraTrees,24,36,0.0
+ieee30,Experiment B: current only,ExtraTrees,30,36,0.0
+ieee30,Experiment B: current only,RandomForest,1,36,1.0
+ieee30,Experiment B: current only,RandomForest,6,36,0.0
+ieee30,Experiment B: current only,RandomForest,10,36,0.0
+ieee30,Experiment B: current only,RandomForest,24,36,0.0
+ieee30,Experiment B: current only,RandomForest,30,36,0.0
+ieee30,Experiment C: existing V+C,ExtraTrees,1,36,1.0
+ieee30,Experiment C: existing V+C,ExtraTrees,6,36,0.75
+ieee30,Experiment C: existing V+C,ExtraTrees,10,36,0.75
+ieee30,Experiment C: existing V+C,ExtraTrees,24,36,0.75
+ieee30,Experiment C: existing V+C,ExtraTrees,30,36,0.0
+ieee30,Experiment C: existing V+C,RandomForest,1,36,1.0
+ieee30,Experiment C: existing V+C,RandomForest,6,36,0.3333333333333333
+ieee30,Experiment C: existing V+C,RandomForest,10,36,0.0
+ieee30,Experiment C: existing V+C,RandomForest,24,36,0.0
+ieee30,Experiment C: existing V+C,RandomForest,30,36,0.0
+ieee30,Experiment D: existing + normalized V/I,ExtraTrees,1,36,1.0
+ieee30,Experiment D: existing + normalized V/I,ExtraTrees,6,36,1.0
+ieee30,Experiment D: existing + normalized V/I,ExtraTrees,10,36,1.0
+ieee30,Experiment D: existing + normalized V/I,ExtraTrees,24,36,1.0
+ieee30,Experiment D: existing + normalized V/I,ExtraTrees,30,36,1.0
+ieee30,Experiment D: existing + normalized V/I,RandomForest,1,36,1.0
+ieee30,Experiment D: existing + normalized V/I,RandomForest,6,36,1.0
+ieee30,Experiment D: existing + normalized V/I,RandomForest,10,36,1.0
+ieee30,Experiment D: existing + normalized V/I,RandomForest,24,36,1.0
+ieee30,Experiment D: existing + normalized V/I,RandomForest,30,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,ExtraTrees,1,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,ExtraTrees,6,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,ExtraTrees,10,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,ExtraTrees,24,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,ExtraTrees,30,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,RandomForest,1,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,RandomForest,6,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,RandomForest,10,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,RandomForest,24,36,1.0
+ieee30,Experiment E: existing + normalized V/I + rank,RandomForest,30,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,1,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,6,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,10,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,24,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,ExtraTrees,30,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,1,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,6,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,10,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,24,36,1.0
+ieee30,Experiment F: existing + normalized V/I + rank + V-I coupled,RandomForest,30,36,1.0

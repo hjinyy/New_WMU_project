@@ -1,0 +1,5 @@
+NetworkID,Model,BestVariant,BaselineExactBusAccuracy,BestExactBusAccuracy,DeltaExactBusAccuracy,BaselineOneHopAccuracy,BestOneHopAccuracy,DeltaOneHopAccuracy,BaselineGraphDistanceMAE,BestGraphDistanceMAE,DeltaGraphDistanceMAE,SeenExactBusAccuracy
+ieee14,ExtraTrees,Experiment E: existing + normalized V/I + rank,0.2,1.0,0.8,0.2,1.0,0.8,2.0,0.0,-2.0,1.0
+ieee14,RandomForest,Experiment F: existing + normalized V/I + rank + V-I coupled,0.2,1.0,0.8,0.25,1.0,0.75,1.9555555555555555,0.0,-1.9555555555555555,1.0
+ieee30,ExtraTrees,Experiment D: existing + normalized V/I,0.6388888888888888,1.0,0.36111111111111116,0.6388888888888888,1.0,0.36111111111111116,1.5555555555555556,0.0,-1.5555555555555556,1.0
+ieee30,RandomForest,Experiment D: existing + normalized V/I,0.2,1.0,0.8,0.2,1.0,0.8,3.0,0.0,-3.0,1.0

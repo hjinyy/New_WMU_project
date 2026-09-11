@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "network_id": "ieee14",
+      "feature_file": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/features/ieee14_fault_generalization_features.csv.gz",
+      "legacy_results_file": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/results/unseen_resistance_results.csv"
+    },
+    {
+      "network_id": "ieee30",
+      "feature_file": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee30_fault_generalization_features.csv.gz",
+      "legacy_results_file": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/results/unseen_resistance_results.csv"
+    }
+  ],
+  "split": "Train resistance 0.1Ω + 1Ω; Test resistance 10Ω",
+  "simulation_rerun": false
+}
