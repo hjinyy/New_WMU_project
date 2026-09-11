@@ -1,1 +1,3 @@
-Figure 5. Performance degradation under unseen fault resistance. Full-WMU exact-bus localization remains near 100% for known resistance values but drops under held-out resistance, especially for the IEEE14 Bus14-PCC dataset, motivating robustness-aware training or domain adaptation.
+# Figure 5 — Unseen-resistance localization comparison
+
+Baseline absolute features are compared with normalized/spatial feature configurations for unseen 10 Ω exact-bus localization. Results are representative-bus, not all-bus, results.

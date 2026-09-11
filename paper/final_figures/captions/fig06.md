@@ -1,1 +1,3 @@
-Figure 6. Representative WMU event waveform signatures for IEEE14 and IEEE30. For each event class, cycle-RMS-smoothed voltage and current envelopes around the 0.3-s event onset are shown at representative WMU buses, with the event interval shaded.
+# Figure 6 — Coarse-category localization signature
+
+Category-wise localization performance summary for Ground, Phase-to-phase, and Three-phase fault categories. This replaces old event waveform signatures for the hierarchical diagnosis story.

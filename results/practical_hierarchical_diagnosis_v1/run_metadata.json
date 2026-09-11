@@ -1,0 +1,25 @@
+{
+  "output_root": "/home/hy/WMU_project/results/practical_hierarchical_diagnosis_v1",
+  "simulation_rerun": false,
+  "phase_status": {
+    "Phase1_current_dataset_hierarchical": "COMPLETED",
+    "Phase2_reduced_wmu_current_dataset": "COMPLETED",
+    "Phase3_full_bus_simulation": "PLANNED_NOT_RUN",
+    "Phase4_ieee30_full_bus": "PLANNED_NOT_RUN",
+    "Phase5_resistance_sweep_5_20ohm": "NOT_AVAILABLE_UNTIL_SIMULATION"
+  },
+  "sources": [
+    {
+      "fault": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/features/ieee14_fault_generalization_features.csv.gz",
+      "manifest": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/manifests/fault_generalization_manifest.csv",
+      "legacy": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/results/unseen_resistance_results.csv",
+      "basic": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/features_basic_v1/ieee14_features.csv.gz"
+    },
+    {
+      "fault": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee30_fault_generalization_features.csv.gz",
+      "manifest": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/manifests/fault_generalization_manifest.csv",
+      "legacy": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/results/unseen_resistance_results.csv",
+      "basic": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/features_basic_v1/ieee30_features.csv.gz"
+    }
+  ]
+}

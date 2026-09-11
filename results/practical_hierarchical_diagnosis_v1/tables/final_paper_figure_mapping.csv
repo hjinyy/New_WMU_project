@@ -1,0 +1,8 @@
+FinalFigure,SourceGeneratedFigure,SourceCSV,Note
+fig01_test_system_sensor_placement,fig03_full_vs_reduced_wmu,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig02_overall_proposed_flowchart,fig01_hierarchical_diagnosis_structure,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig03_wmu_time_series_waveforms,fig06_representative_spatial_response,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig04_baseline_confusion_matrix,fig05_coarse_fault_category_confusion,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig05_unseen_resistance_degradation,fig02_resistance_performance,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig06_event_waveform_signatures,fig06_representative_spatial_response,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.
+fig07_eventwise_feature_boxplots,fig04_baseline_vs_normalized_spatial,results/practical_hierarchical_diagnosis_v1/tables/*.csv,Updated from practical hierarchical diagnosis v1 generated outputs; no obsolete final figure mixed.

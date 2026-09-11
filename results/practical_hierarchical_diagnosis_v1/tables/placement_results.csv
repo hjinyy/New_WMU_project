@@ -1,0 +1,7 @@
+NetworkID,WMUCount,SelectedWMUBuses,SelectionData,SelectionObjective
+ieee14,3,11;6;1,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"
+ieee14,5,11;6;1;14;2,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"
+ieee14,14,1;2;3;4;5;6;7;8;9;10;11;12;13;14,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"
+ieee30,3,1;10;6,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"
+ieee30,5,1;10;6;24;30,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"
+ieee30,30,1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30,Train resistance 0.1Ω+1Ω only; no 10Ω test used,"train-CV localization, ExtraTrees, normalized+rank"

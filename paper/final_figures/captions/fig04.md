@@ -1,1 +1,3 @@
-Figure 4. Baseline full-WMU confusion matrices. Under the seen-condition dataset, event-classification confusion matrices are nearly diagonal, and the inset text reports full-WMU event Macro-F1 and exact-bus localization accuracy for IEEE14 and IEEE30.
+# Figure 4 — Coarse fault-category confusion matrix
+
+Ground, phase-to-phase, and three-phase category confusion matrices for the practical hierarchical diagnosis experiment. Stage 3 is evaluated only on fault cases.

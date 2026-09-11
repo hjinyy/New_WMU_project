@@ -1,0 +1,8 @@
+Figure,Source,Network,Model,TrainResistance,TestResistance,Note
+fig01_test_system_sensor_placement,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig02_overall_proposed_flowchart,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig03_wmu_time_series_waveforms,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig04_baseline_confusion_matrix,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig05_unseen_resistance_degradation,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig06_event_waveform_signatures,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.
+fig07_eventwise_feature_boxplots,results/practical_hierarchical_diagnosis_v1 tables/figures,IEEE14/IEEE30,ExtraTrees primary; RandomForest in tables,0.1Ω + 1Ω,10Ω,Representative-bus current dataset; full-bus simulation not yet run.

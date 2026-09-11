@@ -1,1 +1,3 @@
-Figure 2. Overall flowchart of the proposed method. Simulink event generation and SSO injection are followed by 0.5-s WMU waveform export, validation, physically interpretable feature extraction, CaseID-grouped machine learning, and event-classification/fault-localization evaluation.
+# Figure 2 — Hierarchical diagnosis pipeline
+
+Proposed practical diagnosis flow: WMU voltage/current waveforms, physical and normalized spatial features, Stage 1 fault/non-fault detection, Stage 2 exact fault-bus localization, and Stage 3 coarse fault-category diagnosis.

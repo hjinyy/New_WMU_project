@@ -1,0 +1,3 @@
+NetworkID,FeatureSource,FaultBusCount,FaultBuses,IsAllBusDataset,ExpectedAllBusCount,FaultCaseRows
+ieee14,/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_bus14_pcc_v1/features/ieee14_fault_generalization_features.csv.gz,5,2;6;9;11;14,False,14,540
+ieee30,/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee30_fault_generalization_features.csv.gz,5,1;6;10;24;30,False,30,540

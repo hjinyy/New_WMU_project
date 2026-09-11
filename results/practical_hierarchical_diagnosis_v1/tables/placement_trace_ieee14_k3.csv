@@ -1,0 +1,15 @@
+NetworkID,k_target,CandidateBus,TrainOnlyImportanceScore,SelectionData
+ieee14,3,11,0.14266772793768887,R=0.1/1.0 train rows only
+ieee14,3,6,0.12455702861170556,R=0.1/1.0 train rows only
+ieee14,3,1,0.09333305478906267,R=0.1/1.0 train rows only
+ieee14,3,14,0.08445648446752639,R=0.1/1.0 train rows only
+ieee14,3,2,0.08022780743354029,R=0.1/1.0 train rows only
+ieee14,3,9,0.07659270931898471,R=0.1/1.0 train rows only
+ieee14,3,5,0.06260519904354513,R=0.1/1.0 train rows only
+ieee14,3,10,0.05977354206605494,R=0.1/1.0 train rows only
+ieee14,3,7,0.05750347174265648,R=0.1/1.0 train rows only
+ieee14,3,8,0.05211700227612574,R=0.1/1.0 train rows only
+ieee14,3,13,0.051102081791744906,R=0.1/1.0 train rows only
+ieee14,3,4,0.047946231622136445,R=0.1/1.0 train rows only
+ieee14,3,12,0.03939393484778246,R=0.1/1.0 train rows only
+ieee14,3,3,0.027723724051445398,R=0.1/1.0 train rows only

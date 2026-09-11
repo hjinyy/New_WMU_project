@@ -1,1 +1,3 @@
-Figure 3. Time-series WMU waveforms at IEEE14 Bus 14. Normal-like, three-phase fault, and single-line-to-ground fault responses are overlaid over the event interval; resistance-dependent waveform similarity explains why unseen fault resistance is more difficult than unseen inception angle.
+# Figure 3 — Resistance-dependent spatial response
+
+Representative feature-derived response showing how absolute current response changes with fault resistance and how normalized spatial response is used for robustness. Source is the current representative-bus fault-generalization feature table.

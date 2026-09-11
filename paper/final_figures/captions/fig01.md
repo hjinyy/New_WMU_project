@@ -1,1 +1,3 @@
-Figure 1. Test systems and optimized WMU placement. IEEE 14-bus and IEEE 30-bus one-line schematics highlight the wind/SSO interconnection buses, PCCs, generator buses, and representative five-WMU placements used for reduced-sensor evaluation.
+# Figure 1 — Test systems and selected reduced-WMU placement
+
+IEEE14 and IEEE30 bus topologies with k=5 WMU locations selected from train resistance cases only (0.1 Ω + 1 Ω). The held-out 10 Ω test cases were not used for placement selection.
