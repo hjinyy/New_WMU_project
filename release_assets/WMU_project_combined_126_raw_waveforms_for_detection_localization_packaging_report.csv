@@ -1,2 +1,0 @@
-ZipPath,ZipExists,ZipSizeBytes,RawCsvCountInZip,RequiredFilesMissing,ZipTestFirstBadFile,Status,StagingFolder,MetadataRows,IntegrityStatusCounts,Normal,LoadSwitch5,LoadSwitch15,LoadSwitch30,SLG,ThreePhase,GitCommitAtPackaging,GitLfsAvailable,CreatedUtc
-release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization.zip,True,1927035916,126,,,OK,release_assets/WMU_project_combined_126_raw_waveforms_for_detection_localization,126,{'OK': 126},3,21,21,21,30,30,eae7157cb3796cd829c7be4e94fa124d6930d551,False,2026-06-17T12:23:57.998516+00:00
