@@ -1,0 +1,3 @@
+Item,Status,Reason
+IEEE Stage 2 physical residual evaluation,BLOCKED_NO_VALIDATED_IEEE_ELECTRICAL_MODEL,No verified Ybus/parameters/current semantics; v2 does not substitute standard IEEE values.
+SSO-aware IEEE physics performance,BLOCKED,25Hz waveform detectability and electrical injection path are not yet validated.

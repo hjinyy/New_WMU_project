@@ -1,0 +1,52 @@
+NoiseSigma,GrossError,Condition,TrueBus,PredictionLabel,Status,Count
+0.005,0.0,C3_AllHypothesis_L2,2,2.0,Identified,100
+0.005,0.0,C3_AllHypothesis_L2,3,3.0,Identified,100
+0.005,0.0,C3_AllHypothesis_L2,4,4.0,Identified,100
+0.005,0.0,C3_AllHypothesis_L2,5,5.0,Identified,100
+0.005,0.0,C4_TemplateCandidate_L2,2,2.0,Identified,97
+0.005,0.0,C4_TemplateCandidate_L2,2,ABSTAIN,No Valid Hypothesis,3
+0.005,0.0,C4_TemplateCandidate_L2,3,3.0,Identified,100
+0.005,0.0,C4_TemplateCandidate_L2,4,4.0,Identified,100
+0.005,0.0,C4_TemplateCandidate_L2,5,5.0,Identified,100
+0.005,0.0,C5_Candidate_Huber_Confidence,2,2.0,Identified,97
+0.005,0.0,C5_Candidate_Huber_Confidence,2,ABSTAIN,No Valid Hypothesis,3
+0.005,0.0,C5_Candidate_Huber_Confidence,3,3.0,Identified,99
+0.005,0.0,C5_Candidate_Huber_Confidence,3,ABSTAIN,No Valid Hypothesis,1
+0.005,0.0,C5_Candidate_Huber_Confidence,4,4.0,Identified,100
+0.005,0.0,C5_Candidate_Huber_Confidence,5,5.0,Identified,98
+0.005,0.0,C5_Candidate_Huber_Confidence,5,ABSTAIN,No Valid Hypothesis,2
+0.02,0.0,C3_AllHypothesis_L2,2,2.0,Identified,100
+0.02,0.0,C3_AllHypothesis_L2,3,3.0,Identified,100
+0.02,0.0,C3_AllHypothesis_L2,4,4.0,Identified,100
+0.02,0.0,C3_AllHypothesis_L2,5,5.0,Identified,100
+0.02,0.0,C4_TemplateCandidate_L2,2,2.0,Identified,60
+0.02,0.0,C4_TemplateCandidate_L2,2,ABSTAIN,No Valid Hypothesis,40
+0.02,0.0,C4_TemplateCandidate_L2,3,3.0,Identified,100
+0.02,0.0,C4_TemplateCandidate_L2,4,4.0,Identified,92
+0.02,0.0,C4_TemplateCandidate_L2,4,ABSTAIN,No Valid Hypothesis,8
+0.02,0.0,C4_TemplateCandidate_L2,5,5.0,Identified,100
+0.02,0.0,C5_Candidate_Huber_Confidence,2,2.0,Identified,60
+0.02,0.0,C5_Candidate_Huber_Confidence,2,ABSTAIN,No Valid Hypothesis,40
+0.02,0.0,C5_Candidate_Huber_Confidence,3,3.0,Identified,100
+0.02,0.0,C5_Candidate_Huber_Confidence,4,4.0,Identified,92
+0.02,0.0,C5_Candidate_Huber_Confidence,4,ABSTAIN,No Valid Hypothesis,8
+0.02,0.0,C5_Candidate_Huber_Confidence,5,5.0,Identified,100
+0.02,0.08,C3_AllHypothesis_L2,2,2.0,Identified,100
+0.02,0.08,C3_AllHypothesis_L2,3,3.0,Identified,100
+0.02,0.08,C3_AllHypothesis_L2,4,4.0,Identified,100
+0.02,0.08,C3_AllHypothesis_L2,5,5.0,Identified,100
+0.02,0.08,C4_TemplateCandidate_L2,2,2.0,Identified,65
+0.02,0.08,C4_TemplateCandidate_L2,2,3.0,Identified,5
+0.02,0.08,C4_TemplateCandidate_L2,2,4.0,Identified,2
+0.02,0.08,C4_TemplateCandidate_L2,2,ABSTAIN,No Valid Hypothesis,28
+0.02,0.08,C4_TemplateCandidate_L2,3,3.0,Identified,100
+0.02,0.08,C4_TemplateCandidate_L2,4,4.0,Identified,83
+0.02,0.08,C4_TemplateCandidate_L2,4,5.0,Identified,2
+0.02,0.08,C4_TemplateCandidate_L2,4,ABSTAIN,No Valid Hypothesis,15
+0.02,0.08,C4_TemplateCandidate_L2,5,5.0,Identified,100
+0.02,0.08,C5_Candidate_Huber_Confidence,2,2.0,Identified,65
+0.02,0.08,C5_Candidate_Huber_Confidence,2,ABSTAIN,No Valid Hypothesis,35
+0.02,0.08,C5_Candidate_Huber_Confidence,3,3.0,Identified,100
+0.02,0.08,C5_Candidate_Huber_Confidence,4,4.0,Identified,82
+0.02,0.08,C5_Candidate_Huber_Confidence,4,ABSTAIN,No Valid Hypothesis,18
+0.02,0.08,C5_Candidate_Huber_Confidence,5,5.0,Identified,100

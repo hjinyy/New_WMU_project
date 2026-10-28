@@ -1,0 +1,13 @@
+{
+  "source_root": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1",
+  "manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "train_resistance": [
+    0.1,
+    1.0
+  ],
+  "test_resistance": 10,
+  "synthetic_seed": 20261029,
+  "synthetic_reference_bus_policy": "bus1=ReferenceBusUnidentifiable; excluded from valid-hypothesis accuracy",
+  "stage1": "train-only spatial templates; C2 candidate recall compared to matched random and max-DeltaI sensor heuristic",
+  "overwrite_policy": "fail if output exists"
+}
