@@ -1,0 +1,15 @@
+{
+  "source_root": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1",
+  "source_manifest": "/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/manifests/fault_generalization_manifest.csv",
+  "source_manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "train_resistances": [
+    0.1,
+    1.0
+  ],
+  "test_resistance": 10.0,
+  "synthetic_seed": 20260914,
+  "synthetic_replicates": 100,
+  "waveform_audit_cases_per_network": 12,
+  "ieee_stage2_status": "BLOCKED_NO_VALIDATED_IEEE_ELECTRICAL_MODEL",
+  "overwrite_policy": "fail_if_output_exists"
+}
