@@ -1,0 +1,4 @@
+Scope,Status,Reason
+SLG/LL/LLG,BLOCKED_INSUFFICIENT_SEQUENCE_MODEL,"Public positive-sequence branch data alone lacks verified zero/negative sequence, source and grounding response."
+Current physical equation,BLOCKED_UNVERIFIED_CURRENT_DIRECTION,WMU current channel semantics/direction unverified.
+IEEE validated Stage 2,UNVERIFIED_BENCHMARK_COMPATIBILITY,Topology match and voltage phasor scale diagnostic do not validate Simulink EMT/fault model.

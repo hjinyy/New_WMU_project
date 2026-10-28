@@ -1,0 +1,44 @@
+{
+  "base_commit": "ccc4ee6",
+  "git_head_at_run": "ccc4ee6f657d139d473513e64d1ec8bc4729faee",
+  "matpower_sources": [
+    {
+      "Benchmark": "case14",
+      "PublicBranchCount": 20,
+      "LocalBranchCount": 20,
+      "TopologyExact": true,
+      "BaseMVA": 100.0,
+      "TapNonUnity": 3,
+      "SourceURL": "https://raw.githubusercontent.com/MATPOWER/matpower/master/data/case14.m",
+      "SHA256": "2ffc4e1b734ae6c5e92dbe68b4e36010ed695a4bbcc4d065c74c4fbc39fcf3c1"
+    },
+    {
+      "Benchmark": "case30",
+      "PublicBranchCount": 41,
+      "LocalBranchCount": 41,
+      "TopologyExact": true,
+      "BaseMVA": 100.0,
+      "TapNonUnity": 0,
+      "SourceURL": "https://raw.githubusercontent.com/MATPOWER/matpower/master/data/case30.m",
+      "SHA256": "3d9030311259b553be85d02336b7e1bcb24ec04775bee6671bdb62d18e4e2137"
+    },
+    {
+      "Benchmark": "case_ieee30",
+      "PublicBranchCount": 41,
+      "LocalBranchCount": 41,
+      "TopologyExact": true,
+      "BaseMVA": 100.0,
+      "TapNonUnity": 4,
+      "SourceURL": "https://raw.githubusercontent.com/MATPOWER/matpower/master/data/case_ieee30.m",
+      "SHA256": "b3bcc6165577e9e70a39af98f808405233a184289056cab8ce35fbc5a3ad953e"
+    }
+  ],
+  "raw_manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "scope": "BENCHMARK_PROXY_EXPERIMENT; voltage phasor only; ThreePhase only",
+  "excluded_fault_types": [
+    "SLG",
+    "LL",
+    "LLG"
+  ],
+  "uses_fault_truth_at_inference": false
+}

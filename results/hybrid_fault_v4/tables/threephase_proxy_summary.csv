@@ -1,0 +1,4 @@
+Network,Benchmark,Status,N,ExactBusAccuracy,MedianResidual,MedianLocationMargin
+ieee14,case14,IdentifiedLocation_AmbiguousResistance,135,0.2,0.045418495176743054,4.051364579226004
+ieee30,case30,IdentifiedLocation_AmbiguousResistance,135,0.0,1.327691786424648,0.0731106272586322
+ieee30,case_ieee30,IdentifiedLocation_AmbiguousResistance,135,0.0,1.326515683563058,0.08064099710649801
