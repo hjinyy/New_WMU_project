@@ -104,7 +104,7 @@ BLOCKED_SSO_PHYSICAL_VALIDATION
 
 ## 7. IEEE electrical model 재감사
 
-로컬에는 IEEE30 `.slx`와 IEEE14 `.mdl` artifact가 있으나, 이 환경에는 MATLAB/Simulink executable이 없고 verified Ybus/R/X/transformer/source/ground/current direction export가 없다. 파일명이나 XML text를 parameter evidence로 사용하지 않았다.
+로컬에서 실행 가능한 source artifact로 확인된 것은 R2024a IEEE30 `.slx` 두 개(`Thirtybussys_WMU_IBR_batch_from_user.slx`, `...additional_192_work.slx`)이며 byte-identical이다. IEEE14에는 검증 가능한 source `.slx`가 없고, backup `.mdl` artifact만으로 parameter provenance를 주장하지 않는다. Static IEEE30 inspection은 41 line blocks, 6 transformers, 6 sources, 30 V-I measurements, 30 fault blocks 및 `V_1…I_30` timeseries logging을 확인했지만, **branch-to-bus endpoint mapping, unit/base MVA, source/ground values, current sign/direction은 검증하지 못했다**. 이 환경에는 MATLAB/Simulink executable도 없다. 파일명이나 XML text를 parameter evidence로 사용하지 않았다.
 
 후속 MATLAB 환경에서만 실행할 `scripts/matlab/export_wmu_model_audit_v3.m`를 제공한다. 이 script는 declared block parameters, block paths, dialog parameter values, topology summary를 CSV/JSON으로 export하고 current measurement direction/meaning은 `MANUAL_DIRECTION_REQUIRED` audit table로 남긴다. Python `scripts/validate_wmu_model_export_v3.py`와 test는 schema와 declared-only property만 검증한다. 물리 parameter unit/base MVA/sensor sign는 manual verified audit 없이는 검증되지 않는다.
 

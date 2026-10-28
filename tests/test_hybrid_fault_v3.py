@@ -31,6 +31,13 @@ def test_large_noise_or_all_model_mismatch_yields_not_identified():
     assert deterministic_decision(np.array([.5,.5]),lib,np.eye(2),epsilon=.8).status=='Ambiguous'
 
 
+def test_boundary_equality_2epsilon_is_ambiguous_not_certified():
+    # Ray segments at amplitudes 1 have weighted distance 2*epsilon exactly.
+    lib={2:ResponseSet(np.array([1.,0.]),1.,1.),3:ResponseSet(np.array([-1.,0.]),1.,1.)}
+    d=deterministic_decision(np.array([0.,0.]),lib,np.eye(2),epsilon=1.)
+    assert d.status=='Ambiguous' and not d.mathematical_guarantee
+
+
 def test_stage1_omission_is_not_global_identifiability_guarantee():
     lib={2:ResponseSet(np.array([1.,0.]),.5,1.),3:ResponseSet(np.array([0.,1.]),.5,1.)}
     d=deterministic_decision(np.array([0.,.8]),{2:lib[2]},np.eye(2),epsilon=.05,stage1_restricted=True)

@@ -20,8 +20,9 @@ T=struct2table(rows); writetable(T,fullfile(outDir,'wmu_model_block_audit.csv'))
 meta=struct('schema_version','v3','model_path',modelPath,'model_name',name,'matlab_version',version,'timestamp_utc',char(datetime('now','TimeZone','UTC')),'declared_only',true,'requires_manual_unit_and_baseMVA_verification',true,'parameter_table','wmu_model_block_audit.csv');
 fid=fopen(fullfile(outDir,'wmu_model_export_metadata.json'),'w'); fwrite(fid,jsonencode(meta)); fclose(fid);
 % A separate mapping is required because direction cannot safely be inferred from
-% a current-measurement block alone. User must fill positive terminal and meaning.
-S=table(string({rows.BlockPath})','VariableNames',{'SensorBlockPath'}); S.PositiveDirection=missing(height(S),1); S.MeasurementMeaning=missing(height(S),1); S.VerifiedBy=missing(height(S),1); writetable(S,fullfile(outDir,'wmu_sensor_direction_manual_audit.csv'));
+% a current-measurement block alone. Only measurement/sensor rows are exported.
+sensorRows=rows(contains({rows.SensorDirectionStatus},'MANUAL_DIRECTION_REQUIRED'));
+S=table(string({sensorRows.BlockPath})','VariableNames',{'SensorBlockPath'}); S.PositiveDirection=missing(height(S),1); S.MeasurementMeaning=missing(height(S),1); S.VerifiedBy=missing(height(S),1); writetable(S,fullfile(outDir,'wmu_sensor_direction_manual_audit.csv'));
 end
 function tf=isElectricalCandidate(mt,bt,rb)
 s=lower(strjoin({mt,bt,rb},' ')); keys={'line','transformer','source','machine','load','ground','fault','current measurement','voltage measurement','rlc'}; tf=any(cellfun(@(x)contains(s,x),keys));
