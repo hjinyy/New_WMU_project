@@ -1,0 +1,23 @@
+{
+  "base_commit": "a2ef0ad53921f116e122d54997344ec4936ad924",
+  "run_commit": "a2ef0ad53921f116e122d54997344ec4936ad924",
+  "manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "benchmark_sha256": {
+    "case14": "2ffc4e1b734ae6c5e92dbe68b4e36010ed695a4bbcc4d065c74c4fbc39fcf3c1",
+    "case30": "3d9030311259b553be85d02336b7e1bcb24ec04775bee6671bdb62d18e4e2137",
+    "case_ieee30": "b3bcc6165577e9e70a39af98f808405233a184289056cab8ce35fbc5a3ad953e"
+  },
+  "scope": "BENCHMARK_PROXY_EXPERIMENT; ThreePhase voltage-only; no new Simulink run",
+  "truth_not_used_for_fit_or_candidate_selection": [
+    "FaultBus",
+    "FaultResistanceOhm",
+    "EventStartTime",
+    "FaultDurationCycles"
+  ],
+  "truth_used_only_for_evaluation_annotation": [
+    "FaultBus (FixD unsupported reference-bus denominator)",
+    "FaultResistanceOhm (scoring table only)"
+  ],
+  "unit_policy": "case14: dimensionless p.u. grid because public baseKV=0; IEEE30: public baseKV is an explicit unverified sensitivity assumption",
+  "reference_policy": "Bus1 truth cases in FixD are BLOCKED_REFERENCE_BUS_MODEL and excluded from eligible denominator"
+}
