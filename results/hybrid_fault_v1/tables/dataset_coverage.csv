@@ -1,0 +1,3 @@
+Network,FeatureSource,SHA256,Cases,FaultBuses,TrainResistance,TestResistance
+ieee14,/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee14_fault_generalization_features.csv.gz,be0087b79c4406d82ece7a6959cacd8f69ab125d83e4619652af165ef6e97ad6,540,2;6;9;11;14,0.1;1,10
+ieee30,/home/hy/문서/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/features/ieee30_fault_generalization_features.csv.gz,eb852936bd9c7a3868ca220d2c77b08fe974a43a73e1676c31bc33bea13a20ef,540,1;6;10;24;30,0.1;1,10

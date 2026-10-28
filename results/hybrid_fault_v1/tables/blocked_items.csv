@@ -1,0 +1,5 @@
+Item,Status,Reason
+IEEE14 Ybus/RX/transformer/source/ground model,BLOCKED,Model artifact exists but MATLAB/Simulink is unavailable in this runtime; parameters and current-sensor semantics could not be programmatically extracted and verified.
+IEEE30 Ybus/RX/transformer/source/ground model,BLOCKED,SLX artifacts exist but MATLAB/Simulink is unavailable; XML keyword counts are not validated electrical parameters.
+IEEE SSO-aware electrical model,BLOCKED,Archived helper explicitly raises that a validated physical time-varying SPS injection path is unavailable.
+IEEE C3/C4/C5 physics residual evaluation,BLOCKED,Would require validated IEEE electrical parameters and measurement definitions; not replaced with standard IEEE assumptions.
