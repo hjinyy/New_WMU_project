@@ -16,8 +16,11 @@ class FaultWindow:
 def fundamental_phasor_rms(time:np.ndarray,signal:np.ndarray,f_hz:float=50.)->complex:
     """50 Hz RMS phasor referred to global absolute time, never a local window origin."""
     t=np.asarray(time,float);x=np.asarray(signal,float)
-    if len(t)<20: raise ValueError('phasor window too short')
+    if t.ndim!=1 or x.ndim!=1 or len(t)!=len(x) or len(t)<20: raise ValueError('phasor requires equal 1-D time/signal arrays with at least 20 samples')
+    if not (np.isfinite(t).all() and np.isfinite(x).all()): raise ValueError('phasor input contains non-finite values')
+    if not np.all(np.diff(t)>0): raise ValueError('phasor time must be strictly increasing')
     A=np.c_[np.ones(len(t)),np.cos(2*np.pi*f_hz*t),np.sin(2*np.pi*f_hz*t)]
+    if np.linalg.matrix_rank(A)<3: raise ValueError('phasor design matrix is rank deficient')
     c=np.linalg.lstsq(A,x,rcond=None)[0]
     return complex(c[1],-c[2])/np.sqrt(2.)
 def legacy_local_phasor_rms(time:np.ndarray,signal:np.ndarray,f_hz:float=50.)->complex:

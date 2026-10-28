@@ -44,6 +44,15 @@ def test_fault_window_stops_before_detected_clearing():
     assert w.status=='DetectedFaultWindow' and w.end_s<=.36 and w.end_s>w.start_s
 
 
+def test_phasor_rejects_nonfinite_or_nonmonotonic_time():
+    t=np.arange(0,.02,5e-5);x=np.sin(2*np.pi*50*t)
+    bad=t.copy();bad[5]=bad[4]
+    import pytest
+    with pytest.raises(ValueError,match='strictly increasing'):fundamental_phasor_rms(bad,x)
+    x[3]=np.nan
+    with pytest.raises(ValueError,match='non-finite'):fundamental_phasor_rms(t,x)
+
+
 def test_free_complex_gain_keeps_resistance_profile_ambiguous():
     c=parse_matpower_case("""mpc.baseMVA = 100;\nmpc.bus = [\n1 3 0 0 0 0 1 1 0 0 1 1.1 .9;\n2 1 0 0 0 0 1 1 0 0 1 1.1 .9;\n];\nmpc.gen = [\n1 1 0 1 -1 1 100 1 1 0;\n];\nmpc.branch = [\n1 2 .01 .1 0 0 0 0 0 0 1 -360 360;\n];""")
     fit=fit_proxy(np.array([.2+.1j]),c,[2],[2],[1e-6,.1,10.])

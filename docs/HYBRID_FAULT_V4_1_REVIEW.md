@@ -20,7 +20,7 @@ using absolute sample time `t` for every WMU and every window. Positive sequence
 V_1=(V_a+aV_b+a^2V_c)/3,\quad a=e^{j2\pi/3}.
 \]
 
-Synthetic tests verify: same phasor under changed window start; zero normal-state change; pure 30% sag gives \(|\Delta V|=0.3\); a 0.2-rad phase jump is recovered; and detected clearing is excluded from the interior fault window.
+Synthetic tests verify: same phasor under changed window start; zero normal-state change; pure 30% sag gives \(|\Delta V|=0.3\); a 0.2-rad phase jump is recovered; detected clearing is excluded from the interior fault window; and non-finite/non-monotonic timestamps are rejected rather than silently fitted.
 
 ## B — data-only fault interior window
 
