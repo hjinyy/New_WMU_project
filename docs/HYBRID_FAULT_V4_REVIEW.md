@@ -14,7 +14,15 @@ The source set is vendored unchanged under `data/matpower_v4/`; `results/hybrid_
 | IEEE30 | `case30` | 41/41 | exact | median NRMSE 0.0223; correlation undefined (constant published VM at selected buses) | unverified |
 | IEEE30 | `case_ieee30` | 41/41 | exact | median NRMSE 0.00360; correlation 0.992 | still unverified |
 
-Topology equality and a fitted magnitude scale are insufficient to establish electrical equivalence. The raw channel units/RMS convention, voltage reference, load-flow operating point, source impedances, fault circuit, grounding, and time-domain EMT semantics remain unverified. `case_ieee30` is retained as the primary IEEE30 proxy candidate only because its non-unity transformer taps and selected-bus voltage shape are more informative than `case30`; this is not provenance evidence.
+Topology equality and a fitted magnitude scale are insufficient to establish electrical equivalence. The raw channel units/RMS convention, voltage reference, load-flow operating point, source impedances, fault circuit, grounding, and time-domain EMT semantics remain unverified. Both IEEE30 public candidates are evaluated as explicitly scoped benchmark proxies; their distinct roles are set out below.
+
+### IEEE30 candidate roles (independent artifact audit addendum)
+
+`case30` is the **primary IEEE30 simplified/OPF-style proxy**, not because it is a verified electrical twin, but because a local read-only diagnostic declares `SystemBaseMVA=100` and exactly matches checked load scaling: `Load2=0.217 p.u. = 21.7 MW` and `Load30=0.106 p.u. = 10.6 MW`. Its load-bus inventory is also closer to the local model’s available diagnostics. This evidence does **not** verify individual branch endpoints/R/X/B, transformer taps, source mapping, voltage bases, or fault dynamics.
+
+`case_ieee30` is retained as a **secondary CDF-fidelity sensitivity case**. It has the same 41-edge topology but materially different electrical data: 283.4 MW total demand (including 94.2 MW at bus 5), generator buses/dispatch, voltage-level metadata, and four non-unity taps. The frozen-3-WMU v4 magnitude-shape diagnostic happens to be high for this case, but this does not outweigh the local base/load evidence or establish physical equivalence.
+
+An independent 20%-stratified all-bus audit (108 cases/network; 4,800-sample 50 Hz least-squares window from 0.05–0.29 s) further found stable, balanced raw fundamentals: IEEE14/IEEE30 maximum `V2/V1` of `4.11e-4`/`6.55e-4`. Its all-bus raw-vs-MATPOWER VM correlation was 0.0624 for IEEE14 and 0.7607 for IEEE30 `case_ieee30`; the scale ratio varied by bus (CV 2.49%/3.49%). Those all-bus figures are not interchangeable with the frozen-3-WMU table above. In both audits, the required raw voltage base, peak-versus-RMS convention, and MATPOWER-VA phase reference remain unverified.
 
 ## Voltage-only three-phase proxy
 
