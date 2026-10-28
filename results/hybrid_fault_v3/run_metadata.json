@@ -1,0 +1,29 @@
+{
+  "source_manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "v3_source_sha256": {
+    "scripts/run_hybrid_fault_v3.py": "0a3e28882e3fedd7d2e5cc509efc90bd4a70d63420726d0e38c289527848bedf",
+    "src/wmu_project/hybrid_fault_v3/__init__.py": "2461852e54abf322cc843f15ac32d4a169e6590ae84ba7b2c5185731708016a1",
+    "src/wmu_project/hybrid_fault_v3/core.py": "38fc35f4ba6c7621656a5b5d485a5acbd546fb24394bedfd9e15fc06c34fcf2f",
+    "src/wmu_project/hybrid_fault_v3/reliability.py": "29e1a089fa95481fdb52fae75a53a73f5ec424c885e8fb4bcf0d406c4da96bd0",
+    "src/wmu_project/hybrid_fault_v3/synthetic.py": "ee085f06085247b20f9c31a9b43c348778f9a845004d32642f7c141494c577c1",
+    "src/wmu_project/hybrid_fault_v3/waveform.py": "f371f44c8ab314f6cfe588ec974a7fc2fb0c139215e2a7e8c087b6f875d1f2a3"
+  },
+  "raw_cases": 1080,
+  "detector_10ohm_status": "development diagnostic, not independent final test",
+  "synthetic_seeds": [
+    3000,
+    3001,
+    3002,
+    3003,
+    3004,
+    3005,
+    3006,
+    3007,
+    3008,
+    3009
+  ],
+  "synthetic_reps_per_seed": 25,
+  "base_commit": "21b6919",
+  "git_head_at_run": "21b69194894545a78a03735e008653f88b61c252",
+  "ieee_stage2": "BLOCKED_NO_VALIDATED_IEEE_ELECTRICAL_MODEL"
+}

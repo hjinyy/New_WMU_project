@@ -1,0 +1,3 @@
+Item,Status,Reason
+IEEE Stage 2 physical optimization,BLOCKED_NO_VALIDATED_IEEE_ELECTRICAL_MODEL,No verified Ybus/RX/sensor direction export.
+SSO physical injection validation,BLOCKED_SSO_PHYSICAL_VALIDATION,paired spectrum alone cannot verify electrical injection path.
