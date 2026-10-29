@@ -1,0 +1,43 @@
+{
+  "base_commit": "63f7d939d5429c38f6160a0cda1260e0705e1424",
+  "run_commit": "63f7d939d5429c38f6160a0cda1260e0705e1424",
+  "physical_gate": "BLOCKED_MISSING_EXECUTED_SIMULINK_EXPORT",
+  "missing_evidence": [
+    "wmu_model_export_metadata.json",
+    "wmu_model_block_audit.csv",
+    "wmu_sensor_direction_manual_audit.csv",
+    "physical_verification_v5.csv"
+  ],
+  "executed_export_dir": null,
+  "matlab_available": false,
+  "octave_available": false,
+  "model_artifacts": [
+    {
+      "path": "/home/hy/\ubb38\uc11c/WMU_project/IEEE30bus/model_backup/Thirtybussys_WMU_IBR_source_20260720_232015.slx",
+      "exists": true,
+      "sha256": "cc48c3efe4733a92d2bfaa056315b325537d9e1a03452dc3f119c06358760ca1",
+      "size_bytes": 642219
+    },
+    {
+      "path": "/home/hy/\ubb38\uc11c/WMU_project/IEEE30bus/model_backup/Thirtybussys_WMU_IBR_source_20260731_174300.slx",
+      "exists": true,
+      "sha256": "cc48c3efe4733a92d2bfaa056315b325537d9e1a03452dc3f119c06358760ca1",
+      "size_bytes": 642219
+    },
+    {
+      "path": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/worker_state/worker_1/Thirtybussys_WMU_IBR_auto_worker1.slx",
+      "exists": true,
+      "sha256": "cc48c3efe4733a92d2bfaa056315b325537d9e1a03452dc3f119c06358760ca1",
+      "size_bytes": 642219
+    },
+    {
+      "path": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/worker_state/worker_2/Thirtybussys_WMU_IBR_auto_worker2.slx",
+      "exists": true,
+      "sha256": "cc48c3efe4733a92d2bfaa056315b325537d9e1a03452dc3f119c06358760ca1",
+      "size_bytes": 642219
+    }
+  ],
+  "raw_manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "case30_sha256": "3d9030311259b553be85d02336b7e1bcb24ec04775bee6671bdb62d18e4e2137",
+  "scope": "BLOCKED physical-stage2 audit; existing raw only; no new Simulink run"
+}

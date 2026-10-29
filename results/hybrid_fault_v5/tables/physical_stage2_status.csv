@@ -1,0 +1,4 @@
+Phase,Status,Reason
+A ThreePhase physical location,BLOCKED_MISSING_EXECUTED_SIMULINK_EXPORT,"missing: wmu_model_export_metadata.json, wmu_model_block_audit.csv, wmu_sensor_direction_manual_audit.csv, physical_verification_v5.csv"
+B physical fault resistance,BLOCKED_NO_VALIDATED_SOURCE_FAULT_RESPONSE,free gain is prohibited; calibrated source/fault path absent
+C asymmetric fault types,BLOCKED_NO_VALIDATED_SEQUENCE_GROUNDING_MODEL,positive/negative/zero sequence and grounding are unverified

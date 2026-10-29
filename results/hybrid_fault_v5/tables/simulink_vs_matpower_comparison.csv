@@ -1,0 +1,8 @@
+Component,SimulinkEvidence,MATPOWER_case30,Status
+Topology,static historical inventory: 41 line blocks; endpoints unexported,"30 buses, 41 branches",BLOCKED_UNVERIFIED_ENDPOINT_MAPPING
+Line R/X/B,no executed declared-parameter export,public p.u. branch matrix,BLOCKED_UNVERIFIED_SIMULINK_UNITS_AND_MAPPING
+Transformers,static inventory: 6 transformer blocks; taps/connection/impedance unexported,no non-unity branch tap in public case,BLOCKED_UNVERIFIED_TRANSFORMER_SEMANTICS
+Base values,historical diagnostic reports baseMVA=100 only; bus voltage base unverified,100 MVA; all public baseKV 135,BLOCKED_UNVERIFIED_RAW_SIMULINK_BASE
+Sources/grounding,static inventory: 6 sources; internal impedance/grounding unexported,6 generators; no EMT source model,BLOCKED_NO_SOURCE_THEVENIN_OR_GROUNDING
+WMU measurements,"30 V-I measurements, direction/units/bus mapping manual audit absent",no measurement semantics,BLOCKED_MANUAL_SENSOR_AUDIT_REQUIRED
+Fault circuit,"30 fault blocks, fault resistance/clearing/grounding unexported",no fault blocks,BLOCKED_UNVERIFIED_FAULT_CIRCUIT
