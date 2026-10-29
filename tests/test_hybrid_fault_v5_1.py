@@ -9,6 +9,9 @@ def test_numeric_expression_and_conditional_resistance_bases():
  r=resistance_pu_rows();assert set(r.BasisStatus)=={'PUBLIC_PROXY_ONLY','UNVERIFIED_BASE_NOT_FOR_PHYSICAL_FIT'}
  assert r[r.Basis.str.contains('case30')].Zbase_ohm.iloc[0]==182.25
 
+import pytest
+
+@pytest.mark.skipif(not (REPO/'ieee30_physical_export').is_dir(),reason='external MATLAB export is intentionally uncommitted input')
 def test_export_has_required_actual_components():
  x=parse_export(REPO/'ieee30_physical_export')
  assert len(x['lines'])==41
