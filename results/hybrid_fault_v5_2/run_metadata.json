@@ -1,0 +1,9 @@
+{
+  "base_commit": "bfcfcfe207578f38845fd1af92fa9aabfa4e8f98",
+  "git_head_at_run": "bfcfcfe207578f38845fd1af92fa9aabfa4e8f98",
+  "manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "raw_evaluated": 1080,
+  "raw_missing": 0,
+  "no_simulink_run": true,
+  "truth_use": "post-hoc scoring and annotated figures only; detector baseline/thresholds do not read EventStartTime"
+}

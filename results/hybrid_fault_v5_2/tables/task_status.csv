@@ -1,0 +1,5 @@
+Task,Status,Evidence
+A connectivity physical reconstruction,BLOCKED_AWAITING_EXECUTED_CONNECTIVITY_EXPORT,MATLAB exporter supplied but not executed in Agent environment
+A global physical bases,UNVERIFIED_BASE,no executed connectivity/workspace callback export
+B waveform onset,EXECUTED_EXISTING_RAW_ONLY,manifest=1080; evaluated=1080; missing=0
+B false alarms,NOT_EVALUABLE_NO_NOFAULT_SET,fault corpus has no verified no-event control set
