@@ -1,0 +1,9 @@
+Component,MATPOWER,Simulink,Verified?,Difference
+Voltage base,135 kV line-line; public case30,"sources VoltagePhases=off, Voltage=1.010–1.082; source BaseVoltage field=1; load nominal voltage=1",COMPONENT_EVIDENCE_ONLY,global line-line RMS base declaration absent; 1 V global base UNVERIFIED
+Power base,100 MVA,"five transformers NominalPowerFrequency=[1,50]; one=[250e6,60]",UNVERIFIED_BASE,no global 3-phase Sbase; 250MVA/60Hz block connection not proved
+Impedance base,182.25 ohm from 135kV/100MVA,no declared global Zbase,UNVERIFIED_BASE,1-ohm hypothesis is conditional only
+Line R/X/B,case30 public branch tuples,41 RLC/RL/L branches at 50Hz,PARTIAL,case_ieee30 exact R/X tuple matches: 33/41; endpoint mapping absent
+Transformer,branch tap model; no EMT transformer internals,"6 Yg-Yg transformers, units=pu; five [1,50], one [250e6,60]",PARTIAL,connection/topology and active use unverified
+Source impedance,generator rows; no EMT Thevenin impedance,"6 Yg sources; R=0.8929 ohm, L=16.58mH, 50Hz",PARAMETER_EXPORTED,source-to-bus mapping and sensor/reference semantics unverified
+Fault resistance,no fault block,"30 blocks default Rf=0.001 ohm, Rg=0.01 ohm; all phases/ground off",DEFAULT_ONLY,actual raw 0.1/1/10 overwrite script not found
+WMU voltage units,not applicable,measurement blocks export output type complex but manual audit blank,UNVERIFIED,"raw V/I units, direction, and mapping remain unverified"

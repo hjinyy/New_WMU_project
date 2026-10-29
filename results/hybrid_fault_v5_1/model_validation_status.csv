@@ -1,0 +1,7 @@
+Check,Status,Evidence
+Executed MATLAB parameter export,PASS,R2024a Update 8 metadata; declared block settings
+1V/1VA global base,UNVERIFIED_BASE,component values 1 exist but no global three-phase base declaration
+Raw-case Rf overwrite 0.1/1/10 ohm,BLOCKED_AUTOMATION_SCRIPT_NOT_RECOVERED,available configure_fault_case delegates to IEEE14 utility and sets R=1; not evidence for IEEE30 raw generation
+IEEE30 endpoint/topology reconstruction,BLOCKED_ENDPOINT_EXPORT_MISSING,"export gives port positions, not source/destination handles"
+WMU direction/units/bus mapping,BLOCKED_MANUAL_SENSOR_AUDIT_EMPTY,400 manual-audit rows unfilled
+ThreePhase physical Ybus/Stage 2,BLOCKED_UNVERIFIED_PHYSICAL_MODEL,"base, topology, source mapping, executed fault configuration, and sensors incomplete"

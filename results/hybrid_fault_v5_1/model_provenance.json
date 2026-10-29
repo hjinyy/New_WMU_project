@@ -1,0 +1,11 @@
+{
+  "base_commit": "68fe8b408a6a1872532bb717636117052c1df5aa",
+  "run_commit": "68fe8b408a6a1872532bb717636117052c1df5aa",
+  "scope": "existing MATLAB export and existing raw provenance only; no Simulink run; no physical Stage 2",
+  "input_sha256": {
+    "wmu_model_block_audit.csv": "628e59547dd188622364166117c1a20bc4ba1899c0a17931283c2533b6a8b399",
+    "wmu_model_export_metadata.json": "a605e24462ae6a02724ea46f34c07b0b328edad3d1022394da2c4b32af0b0bea",
+    "wmu_sensor_direction_manual_audit.csv": "e7b46f8b4a458c7f2ac3ce3e56e6432e4d8029cebc6e0347f7178dbba0437c3e"
+  },
+  "result": "BLOCKED_UNVERIFIED_PHYSICAL_MODEL"
+}
