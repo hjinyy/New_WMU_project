@@ -1,0 +1,19 @@
+Network,Method,WindowReason,Count
+ieee14,A_ClearingRequired,clearing leaves insufficient interior fault interval,40
+ieee14,A_ClearingRequired,no data-only clearing after detected onset,45
+ieee14,A_ClearingRequired,v3 onset + v2 paired clearing,50
+ieee14,B_OnsetOnlyFixed_20ms,additional data-only change in fixed window/tail,90
+ieee14,B_OnsetOnlyFixed_20ms,onset-only fixed full-cycle window; no later contrast in tail,45
+ieee14,B_OnsetOnlyFixed_40ms,additional data-only change in fixed window/tail,90
+ieee14,B_OnsetOnlyFixed_40ms,onset-only fixed full-cycle window; no later contrast in tail,45
+ieee14,C_AdaptiveFaultWindow,additional data-only change in adaptive candidate/tail,79
+ieee14,C_AdaptiveFaultWindow,longest stable onset-only candidate,56
+ieee30,A_ClearingRequired,clearing leaves insufficient interior fault interval,19
+ieee30,A_ClearingRequired,no data-only clearing after detected onset,45
+ieee30,A_ClearingRequired,v3 onset + v2 paired clearing,71
+ieee30,B_OnsetOnlyFixed_20ms,additional data-only change in fixed window/tail,90
+ieee30,B_OnsetOnlyFixed_20ms,onset-only fixed full-cycle window; no later contrast in tail,45
+ieee30,B_OnsetOnlyFixed_40ms,additional data-only change in fixed window/tail,90
+ieee30,B_OnsetOnlyFixed_40ms,onset-only fixed full-cycle window; no later contrast in tail,45
+ieee30,C_AdaptiveFaultWindow,additional data-only change in adaptive candidate/tail,90
+ieee30,C_AdaptiveFaultWindow,longest stable onset-only candidate,45
