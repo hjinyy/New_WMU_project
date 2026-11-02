@@ -1,0 +1,5 @@
+Network,FeatureSet,DevelopmentN,DevelopmentAccuracy,DevelopmentMacroF1,Selected
+ieee14,RelativeVI,360,1.0,1.0,True
+ieee14,SequenceFocusedRelativeVI,360,1.0,1.0,False
+ieee30,RelativeVI,360,1.0,1.0,True
+ieee30,SequenceFocusedRelativeVI,360,1.0,1.0,False

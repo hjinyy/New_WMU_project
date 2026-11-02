@@ -1,0 +1,15 @@
+{
+  "development_resistances": [
+    0.1,
+    1.0
+  ],
+  "heldout_resistance": 10.0,
+  "candidates": [
+    "RelativeVI",
+    "SequenceFocusedRelativeVI"
+  ],
+  "selection_metric": "development macro-F1, then accuracy, then lexical parsimony tiebreak",
+  "model": "existing ExtraTrees classifier",
+  "raw_regenerated": false,
+  "simulink_run": false
+}
