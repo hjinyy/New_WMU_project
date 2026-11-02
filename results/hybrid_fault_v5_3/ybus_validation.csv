@@ -1,0 +1,2 @@
+Status,MissingEvidence,Reason
+BLOCKED_INCOMPLETE_CONNECTIVITY,electrical_blocks_v5_3.csv | connectivity_edges_v5_3.csv | focus_components_v5_3.csv | physical_connection_verification_v5_3.csv | connectivity_export_metadata_v5_3.json,required executed-export files absent
