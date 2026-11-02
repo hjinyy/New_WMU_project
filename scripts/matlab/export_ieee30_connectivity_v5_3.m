@@ -5,10 +5,10 @@ if nargin<2,error('Provide modelPath and outputDir.');end
 if ~isfile(modelPath),error('Model not found: %s',modelPath);end
 if ~exist(outputDir,'dir'),mkdir(outputDir);end
 [~,mdl]=fileparts(modelPath); load_system(modelPath); cleanup=onCleanup(@()close_system(mdl,0)); %#ok<NASGU>
-all=find_system(mdl,'LookUnderMasks','all','FollowLinks','on','Type','Block');
+allBlocks=find_system(mdl,'LookUnderMasks','all','FollowLinks','on','Type','Block');
 B=cell(0,9); E=cell(0,14); U=cell(0,7); seen=containers.Map('KeyType','char','ValueType','logical');
-for k=1:numel(all)
- p=all{k}; h=sget(@()get_param(p,'Handle'),NaN); mt=sget(@()get_param(p,'MaskType'),''); bt=sget(@()get_param(p,'BlockType'),'');
+for k=1:numel(allBlocks)
+ p=allBlocks{k}; h=sget(@()get_param(p,'Handle'),NaN); mt=sget(@()get_param(p,'MaskType'),''); bt=sget(@()get_param(p,'BlockType'),'');
  B(end+1,:)={string(p),h,string(sget(@()get_param(p,'Name'),'')),string(bt),string(mt),string(sget(@()get_param(p,'LinkStatus'),'')),string(sget(@()get_param(p,'Commented'),'off')),string(safe_json(@()get_param(p,'DialogParameters'))),string(safe_json(@()get_param(p,'PortConnectivity')))}; %#ok<AGROW>
  ph=sget(@()get_param(p,'PortHandles'),struct()); fn=fieldnames(ph);
  for a=1:numel(fn)

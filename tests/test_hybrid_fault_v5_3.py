@@ -29,4 +29,6 @@ def test_verified_fixture_accepts_fanout_preserving_schema(tmp_path):
 def test_exporter_contains_isfile_and_fanout_loop():
  s=(REPO/'scripts/matlab/export_ieee30_connectivity_v5_3.m').read_text()
  assert '~isfile(modelPath)' in s and 'for d=1:n' in s and 'DestinationOrdinal' in s
+ assert 'allBlocks=find_system' in s and 'for k=1:numel(allBlocks)' in s
+ assert 'all(line==-1)' in s and 'all=find_system' not in s
  assert 'set_param(' not in s and 'sim(' not in s
