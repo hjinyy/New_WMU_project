@@ -1,0 +1,12 @@
+{
+  "scope": "read-only existing feature tables; leave-one-resistance-out evaluation (test resistance excluded entirely from training)",
+  "model": "ExtraTreesClassifier from existing unseen-resistance experiment",
+  "feature_sets": [
+    "Baseline",
+    "Baseline+NormVI"
+  ],
+  "wmus": "existing localization k=3 placements",
+  "simulink_run": false,
+  "raw_regenerated": false,
+  "warning": "each resistance result uses the other two resistances for training; 10 \u03a9 exactly retains the pre-existing 0.1/1-to-10 generalization protocol"
+}

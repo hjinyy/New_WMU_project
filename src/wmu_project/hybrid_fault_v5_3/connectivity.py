@@ -26,19 +26,19 @@ def load_connectivity_export(export_dir:str|Path|None):
  if lines[['FromElectricalNode','ToElectricalNode']].astype(str).apply(lambda c:c.str.strip().eq('')).to_numpy().any():return ConnectivityGate('BLOCKED_INCOMPLETE_CONNECTIVITY',('nonempty node identifiers',),'empty endpoint',str(d)),None
  return ConnectivityGate('READY_FOR_SI_YBUS',(), 'executed export has 41 verified physical line endpoints',str(d)),{'blocks':b,'edges':e,'components':f,'metadata':meta}
 
-def physical_component_tables(bundle, parameter_export_dir:str|Path|None=None):
- f=bundle['components'].copy();freq=float(bundle['metadata'].get('nominal_frequency_hz',50.0))
- # Endpoint/bus evidence comes only from the executed v5.3 export.  This optional
- # join supplies R/L/C from the separately supplied read-only R2024a block audit.
- if parameter_export_dir is not None:
-  try:
-   from wmu_project.hybrid_fault_v5_1.audit import parse_export
-   x=parse_export(parameter_export_dir)['lines'].copy();x['_name']=x.SimulinkBlock.astype(str).str.replace(r'\s+',' ',regex=True).str.strip()
-   f['_name']=f.ComponentPath.astype(str).str.rsplit('/',n=1).str[-1].str.replace(r'\s+',' ',regex=True).str.strip()
-   lookup=x.set_index('_name')[['R_ohm','L_H','C_F']]
-   for c in ['R_ohm','L_H','C_F']:
-    joined=f['_name'].map(lookup[c]);f[c]=pd.to_numeric(f[c],errors='coerce').where(pd.to_numeric(f[c],errors='coerce').notna(),joined)
-   f.drop(columns='_name',inplace=True)
-  except Exception: pass
- f['X_ohm']=2*3.141592653589793*freq*pd.to_numeric(f['L_H'],errors='coerce')
+def physical_component_tables(bundle,parameter_export_dir:str|Path|None=None):
+ """Join verified topology with actual R2024a R/L/C/BranchType parameter audit."""
+ if parameter_export_dir is None:raise ValueError('Original R2024a parameter export is required for BranchType')
+ from wmu_project.hybrid_fault_v5_1.audit import parse_export
+ f=bundle['components'].copy();freq=float(bundle['metadata'].get('nominal_frequency_hz',50.0));x=parse_export(parameter_export_dir)['lines'].copy()
+ x['_name']=x.SimulinkBlock.astype(str).str.replace(r'\s+',' ',regex=True).str.strip()
+ if x['_name'].duplicated().any():raise ValueError('Ambiguous branch names in original MATLAB parameter audit')
+ f['_name']=f.ComponentPath.astype(str).str.rsplit('/',n=1).str[-1].str.replace(r'\s+',' ',regex=True).str.strip()
+ lookup=x.set_index('_name')[['R_ohm','L_H','C_F','BranchType']];is_line=f.ElementType.eq('Three-Phase Series RLC Branch')
+ for c in ['R_ohm','L_H','C_F']:
+  if c not in f:f[c]=float('nan')
+  current=pd.to_numeric(f[c],errors='coerce');f[c]=current.where(current.notna(),f['_name'].map(lookup[c]))
+ f['BranchType']=f['_name'].map(lookup['BranchType'])
+ if f.loc[is_line,'BranchType'].isna().any():raise ValueError('Missing original BranchType for an IEEE30 line block')
+ f.drop(columns='_name',inplace=True);f['X_L_ohm']=2*3.141592653589793*freq*pd.to_numeric(f['L_H'],errors='coerce')
  return f,freq

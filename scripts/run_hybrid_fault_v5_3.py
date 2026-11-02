@@ -29,7 +29,7 @@ def main():
   lines[need]=lines[need].apply(pd.to_numeric,errors='coerce')
   if lines[need].isna().any().any() or not lines.ConnectionVerified.astype(str).str.lower().eq('true').all():raise RuntimeError('line data is not fully verified')
   buses=sorted(set(lines.FromBus.astype(int))|set(lines.ToBus.astype(int)));idx={b:k for k,b in enumerate(buses)};Y=np.zeros((len(buses),len(buses)),complex)
-  for _,r in lines.iterrows():stamp_series_branch(Y,idx[int(r.FromBus)],idx[int(r.ToBus)],r.R_ohm,r.L_H,freq,r.C_F if pd.notna(r.C_F) else 0)
+  for _,r in lines.iterrows():stamp_series_branch(Y,idx[int(r.FromBus)],idx[int(r.ToBus)],r.R_ohm,r.L_H,freq,r.C_F if pd.notna(r.C_F) else 0,branch_type=r.BranchType)
   lines.assign(X_ohm=2*np.pi*freq*lines.L_H,EvidenceBlockPath=lines.ComponentPath).rename(columns={'ComponentPath':'BlockName'}).to_csv(out/'actual_ieee30_branch_connections.csv',index=False)
   ybus_csv(Y,buses).to_csv(out/'ybus_passive_S.csv',index=False);validate_ybus(Y,buses,41).to_csv(out/'ybus_validation.csv',index=False);f.to_csv(out/'physical_parameter_table.csv',index=False)
   (out/'REPORT.md').write_text('# Hybrid v5.3 report\n\n`PARTIAL_PHYSICAL_YBUS`: verified line-only passive SI Ybus. Transformer/source augmentation and fault model remain blocked until their reviewed, physical connection/parameter rows are present. No p.u. conversion is claimed.\n')

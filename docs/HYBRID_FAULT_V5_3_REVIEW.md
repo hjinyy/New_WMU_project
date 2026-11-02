@@ -55,7 +55,13 @@ Before physical reconstruction, review/fill `physical_connection_verification_v5
 - `validation.py`: dimensions, finite values, reciprocity, nonzeros, components, and rank.
 - `run_hybrid_fault_v5_3.py`: creates a **line-only `PARTIAL_PHYSICAL_YBUS`** only after a verified export; transformer/source/fault rows stay separately gated. With the currently absent live export, it creates only a blocked report/provenance/validation reason.
 
-The SI branch relation is \(Z=R+j2\pi 50L\), \(y=1/Z\), with half of a verified line shunt-C stamped at each end. Transformer stamping requires an actual physical impedance and tap: it cannot be silently treated as a line.
+The SI series branch relation uses the actual SPS `BranchType`: \(Z=R+j2\pi50L+1/(j2\pi50C)\) with only active terms included. A separate verified shunt component may be stamped only if an actual model block establishes it; Series RLC Branch capacitance is never treated as line charging. Transformer stamping requires an actual physical impedance and tap: it cannot be silently treated as a line.
+
+## Narrow SPS series-branch correction (post-v5.3)
+
+The original parameter audit contains 41 actual branch types: 21 `RL`, 13 `RLC`, and 7 `L`. The initial generic Python stamp incorrectly treated any `C_F` as π-line shunt capacitance and therefore could also include inactive R/C mask defaults for `L` branches. This has been corrected in the narrowly scoped series stamp: `BranchType` selects active terms in \(Z=R+j\omega L+1/(j\omega C)\); no series-branch capacitance is stamped as a shunt. The runner now requires the read-only R2024a parameter audit and refuses an RL fallback when BranchType is unavailable. The correction was checked against all 41 exported branch records. This changes no official Ybus output because connectivity is still blocked.
+
+Physical Ybus expansion is now stopped pending evidence that it materially improves the ML research objective.
 
 ## Required evidence still missing
 
