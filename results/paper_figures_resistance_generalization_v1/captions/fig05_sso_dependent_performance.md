@@ -1,0 +1,1 @@
+**Figure 5.** Leave-one-resistance-out performance stratified by SSO background using three WMUs. Each marker aggregates all three held-out resistance tests for its background. Localization accuracy and four-class FaultType macro-F1 remain separate outcomes.

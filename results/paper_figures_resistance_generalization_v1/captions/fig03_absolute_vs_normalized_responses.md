@@ -1,0 +1,1 @@
+**Figure 3.** Absolute and normalized multi-WMU voltage and current responses for matched SLG, 0°-inception, No-SSO cases at one representative fault bus per system. Absolute changes weaken as fault resistance increases, whereas case-wise spatial responses preserve relative measurement patterns. Recorded waveform units are not asserted to be per-unit.

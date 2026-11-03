@@ -1,0 +1,1 @@
+**Figure 7.** Effect of measurement availability on held-out 10 Ω fault localization. Reduced three- and five-WMU placements are compared with full-bus observation using the representative five-fault-bus corpus. Normalization is recomputed using only the selected WMUs in each condition.

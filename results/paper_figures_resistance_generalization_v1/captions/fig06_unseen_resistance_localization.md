@@ -1,0 +1,1 @@
+**Figure 6.** Exact fault-bus localization under leave-one-resistance-out evaluation with three WMUs. For each x-axis value, that entire resistance is excluded from training and the remaining two resistances are used for training. Normalized spatial V/I features substantially improve held-out 10 Ω localization; this result is scoped to the representative five-fault-bus corpus.

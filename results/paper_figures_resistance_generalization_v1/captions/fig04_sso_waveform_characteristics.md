@@ -1,0 +1,1 @@
+**Figure 4.** Representative 10 Ω SLG WMU waveforms under No-SSO, 25 Hz/1%, and 25 Hz/3% backgrounds. Signals are normalized by their own pre-event RMS because the raw voltage/current unit base is unverified. Yellow shading denotes the configured three-cycle fault interval.

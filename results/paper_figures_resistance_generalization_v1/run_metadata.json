@@ -1,0 +1,15 @@
+{
+  "scope": "read-only rendering from existing raw CSV, feature/prediction and result tables; no new Simulink run, raw generation, feature extraction, ML training, or paper/final_figures mutation",
+  "requested_font": "Times New Roman",
+  "rendered_font": "Liberation Serif",
+  "resolved_font_path": "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
+  "font_fallback_used": true,
+  "font_note": "Times New Roman was unavailable on this render host; Liberation Serif is the installed Times-compatible serif fallback. The generator detects an installed Times New Roman font and will use it automatically on rerun.",
+  "source_sha256": {
+    "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/manifests/fault_generalization_manifest.csv": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+    "/home/hy/WMU_project/results/high_resistance_ml_baseline_audit_v1/predictions/resistance_holdout_predictions.csv": "21b6bcee148d3364f29cb14d086766c5072460e4ac4c373e1623b1f3dbe8fc94",
+    "/home/hy/WMU_project/results/high_resistance_ml_baseline_audit_v1/tables/resistance_cv_summary.csv": "3a1a255d8cfac72fc93bf87c55ee078cebbd8b0eb953ab0f4391e495781704aa",
+    "/home/hy/WMU_project/results/high_resistance_fault_type_improvement_v1/predictions/heldout_10ohm_predictions.csv": "039181328ace48f8ab5bba026b428d2a749c6f4dbe2fe6f782bdf5a045cb7abd",
+    "/home/hy/WMU_project/results/unseen_resistance_spatial_generalization_v2/tables/localization_results.csv": "455aefccbedccdf913aedd4638d752c8cb714704d0dcb6ac3004d4bd6ae62517"
+  }
+}

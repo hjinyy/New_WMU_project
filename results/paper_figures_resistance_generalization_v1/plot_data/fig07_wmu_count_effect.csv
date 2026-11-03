@@ -1,0 +1,13 @@
+WMUCount,Network,Model,FeatureSet,SelectedWMUBuses,TrainCases,TestCases,FeatureColumnsPerWMU,ExactBusAccuracy,OneHopAccuracy,GraphDistanceMAE
+3,ieee14,ExtraTrees,Baseline,2;6;9,360,180,40,0.2,0.2,2.0
+5,ieee14,ExtraTrees,Baseline,2;6;9;11;4,360,180,40,0.2,0.2,2.0
+14,ieee14,ExtraTrees,Baseline,1;2;3;4;5;6;7;8;9;10;11;12;13;14,360,180,40,0.2,0.2,2.0
+3,ieee14,ExtraTrees,Baseline+NormVI,2;6;9,360,180,44,1.0,1.0,0.0
+5,ieee14,ExtraTrees,Baseline+NormVI,2;6;9;11;4,360,180,44,1.0,1.0,0.0
+14,ieee14,ExtraTrees,Baseline+NormVI,1;2;3;4;5;6;7;8;9;10;11;12;13;14,360,180,44,0.4166666666666667,0.5944444444444444,1.1888888888888889
+3,ieee30,ExtraTrees,Baseline,6;1;2,360,180,40,0.65,0.65,1.2
+5,ieee30,ExtraTrees,Baseline,6;1;2;3;4,360,180,40,0.65,0.65,1.2
+30,ieee30,ExtraTrees,Baseline,1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30,360,180,40,0.6388888888888888,0.6388888888888888,1.5555555555555556
+3,ieee30,ExtraTrees,Baseline+NormVI,6;1;2,360,180,44,0.9,0.9,0.35
+5,ieee30,ExtraTrees,Baseline+NormVI,6;1;2;3;4,360,180,44,0.9388888888888888,0.9388888888888888,0.2111111111111111
+30,ieee30,ExtraTrees,Baseline+NormVI,1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30,360,180,44,1.0,1.0,0.0

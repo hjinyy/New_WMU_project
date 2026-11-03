@@ -1,0 +1,1 @@
+**Figure 8.** Four-class FaultType confusion under held-out 10 Ω with three WMUs. Rows are normalized to percentages. IEEE30 exhibits substantial high-resistance ambiguity, including LLG/LL/SLG errors toward ThreePhase; this limitation is reported separately from fault-location performance.

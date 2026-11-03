@@ -1,0 +1,1 @@
+**Figure 1.** IEEE14 and IEEE30 test systems. Blue squares mark the fixed three-WMU measurement placements (IEEE14: 2, 6, 9; IEEE30: 6, 1, 2). Orange circles mark the representative five fault buses used in the resistance-generalization corpus; they are evaluation locations, not additional sensors.

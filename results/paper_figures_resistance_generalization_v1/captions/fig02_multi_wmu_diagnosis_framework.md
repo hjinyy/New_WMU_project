@@ -1,0 +1,1 @@
+**Figure 2.** Proposed multi-WMU fault-diagnosis framework. Data-only onset extraction precedes waveform feature extraction and case-wise cross-WMU normalization. Exact-bus localization and four-class FaultType prediction are separate supervised tasks; fault metadata are used for training/evaluation labels, not waveform-window extraction.
