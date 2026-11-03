@@ -1,0 +1,98 @@
+{
+  "source_corpus": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1",
+  "manifest_sha256": "0cd23da0f9b6eeb68951ebd1209feeeda85489a0817f034624722985a3883f54",
+  "source_scope": "frozen 1,080-case raw corpus; read-only analysis; no simulation, feature extraction, model training, or raw regeneration",
+  "execution_bus_verdict": {
+    "ieee14": {
+      "bus": 7,
+      "evidence": "current corpus byte-identical to archive fault_generalization_previous_bus7_20260812; historical wmu14_util.m configures SSOInjectionBus=7"
+    },
+    "ieee30": {
+      "bus": 30,
+      "evidence": "documented executed-run provenance; physical electrical injection/PCC topology remains unverified"
+    }
+  },
+  "window_s": [
+    0.08,
+    0.28
+  ],
+  "frequency_components_hz": [
+    25.0,
+    75.0
+  ],
+  "rendered_font": "Liberation Serif",
+  "selected_cases": [
+    {
+      "Network": "ieee14",
+      "CaseID": 19,
+      "Background": "NoSSO",
+      "FaultBus": 2,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 7,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee14_case_0019__FT_SLG__BUS_02__R_10__ANG_000__BG_NoSSO.csv",
+      "SHA256": "07e2af66786d2fffe563450824ea66affd5fa11dd8433163ece77c749a42e55e"
+    },
+    {
+      "Network": "ieee14",
+      "CaseID": 20,
+      "Background": "SSO25Hz_M01",
+      "FaultBus": 2,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 7,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee14_case_0020__FT_SLG__BUS_02__R_10__ANG_000__BG_SSO25Hz_M01.csv",
+      "SHA256": "f941b993786337d0de95fc45b6cb5b38b2e7a22b957c3f8585e0c16a70ddf435"
+    },
+    {
+      "Network": "ieee14",
+      "CaseID": 21,
+      "Background": "SSO25Hz_M03",
+      "FaultBus": 2,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 7,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee14_case_0021__FT_SLG__BUS_02__R_10__ANG_000__BG_SSO25Hz_M03.csv",
+      "SHA256": "cdf98a0d52060d921f7999eeeff1b64fa178679e2e0d32841b6ad2a3020f21fc"
+    },
+    {
+      "Network": "ieee30",
+      "CaseID": 559,
+      "Background": "NoSSO",
+      "FaultBus": 1,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 30,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee30_case_0559__FT_SLG__BUS_01__R_10__ANG_000__BG_NoSSO.csv",
+      "SHA256": "751e7a6bedcb5f3c15f70e98f7ccdbfb3759b105d79a8696743b2c501d7a7524"
+    },
+    {
+      "Network": "ieee30",
+      "CaseID": 560,
+      "Background": "SSO25Hz_M01",
+      "FaultBus": 1,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 30,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee30_case_0560__FT_SLG__BUS_01__R_10__ANG_000__BG_SSO25Hz_M01.csv",
+      "SHA256": "a92fe7aceef8d651abd064e124f8ea1ef40d2f5e1bde1794443955f3efb8db29"
+    },
+    {
+      "Network": "ieee30",
+      "CaseID": 561,
+      "Background": "SSO25Hz_M03",
+      "FaultBus": 1,
+      "FaultType": "SLG",
+      "ResistanceOhm": 10.0,
+      "AngleDeg": 0,
+      "ReferenceBus": 30,
+      "RawCSV": "/home/hy/\ubb38\uc11c/WMU_project/_quarantine_removed_20260813_mixed_sources/analysis_basic_v1/analysis_fault_generalization_v1/raw_csv/ieee30_case_0561__FT_SLG__BUS_01__R_10__ANG_000__BG_SSO25Hz_M03.csv",
+      "SHA256": "423583ffe1c27506aa21e625390d6aa30451ab097db45dd09b2ea1d0710de897"
+    }
+  ]
+}
